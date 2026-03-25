@@ -1,0 +1,120 @@
+/* Lunaris Design System - CSS Variables */
+/* Glassmorphism + Bento Grid Style */
+
+:root {
+  /* === Glassmorphism Base === */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-strong: rgba(255, 255, 255, 0.12);
+  --glass-bg-hover: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-strong: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(20px);
+  --glass-blur-strong: blur(40px);
+
+  /* === Colors === */
+  --color-background: #0f0f1a;
+  --color-background-gradient: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
+  --color-foreground: #f1f1f7;
+  --color-foreground-secondary: rgba(241, 241, 247, 0.7);
+  --color-card: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(255, 255, 255, 0.12);
+
+  --color-primary: #7c3aed;
+  --color-primary-light: #a78bfa;
+  --color-primary-foreground: #ffffff;
+  --color-primary-glow: rgba(124, 58, 237, 0.4);
+  --color-primary-soft: rgba(124, 58, 237, 0.15);
+  --color-primary-gradient: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+
+  --color-secondary: rgba(255, 255, 255, 0.06);
+  --color-secondary-foreground: #f1f1f7;
+
+  --color-muted: rgba(255, 255, 255, 0.04);
+  --color-muted-foreground: rgba(241, 241, 247, 0.5);
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Accent Colors */
+  --color-xp: #f59e0b;
+  --color-streak: #ef4444;
+  --color-level: #10b981;
+  --color-practice: #7c3aed;
+
+  /* === Typography === */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Mobile font sizes */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-lg: 17px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 34px;
+
+  /* Desktop font sizes */
+  --font-size-desktop-base: 16px;
+  --font-size-desktop-lg: 18px;
+  --font-size-desktop-xl: 22px;
+  --font-size-desktop-2xl: 28px;
+  --font-size-desktop-3xl: 36px;
+  --font-size-desktop-4xl: 42px;
+
+  /* === Spacing === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* === Border Radius === */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* === Layout === */
+  --mobile-width: 390px;
+  --desktop-width: 1440px;
+  --sidebar-width: 260px;
+  --bottom-nav-height: 72px;
+
+  /* === Bento Grid === */
+  --bento-gap: 16px;
+  --bento-gap-desktop: 20px;
+}
+
+/* === Base Styles === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-foreground);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

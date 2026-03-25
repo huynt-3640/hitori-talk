@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress Analytics - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .progress-desktop { width: 1440px; min-height: 100vh; display: flex; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .progress-desktop::before { content: ''; position: absolute; top: -200px; right: 300px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: var(--space-10) var(--space-12); display: flex; flex-direction: column; gap: var(--space-8); position: relative; z-index: 1; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; }
+    .page-title { font-size: var(--font-size-desktop-4xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .period-tabs { display: flex; gap: var(--space-3); }
+    .period-tab { padding: var(--space-2) var(--space-5); font-family: var(--font-family); font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-medium); color: var(--color-muted-foreground); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-full); cursor: pointer; }
+    .period-tab.active { background: var(--color-primary-soft); color: var(--color-primary-light); border-color: var(--color-primary); }
+
+    /* Summary */
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--bento-gap-desktop); }
+    .summary-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); }
+    .summary-value { font-size: var(--font-size-desktop-3xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .summary-label { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-top: 4px; }
+    .summary-change { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: 6px; }
+    .change-up { color: var(--color-success); }
+    .change-down { color: var(--color-destructive); }
+
+    /* Two Column Charts */
+    .charts-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--bento-gap-desktop); }
+
+    /* Chart */
+    .chart-card { padding: var(--space-6); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-2xl); }
+    .chart-title { font-size: var(--font-size-desktop-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-5); }
+    .chart-bars { display: flex; align-items: flex-end; gap: 12px; height: 180px; }
+    .chart-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .chart-bar { width: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--color-primary-soft); }
+    .chart-bar.active { background: var(--color-primary-gradient); box-shadow: 0 0 12px var(--color-primary-glow); }
+    .chart-label { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+
+    /* Heatmap */
+    .heatmap-card { padding: var(--space-6); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-2xl); }
+    .heatmap-title { font-size: var(--font-size-desktop-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-5); }
+    .heatmap-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .heatmap-cell { flex: 1; aspect-ratio: 1; border-radius: var(--radius-sm); }
+    .heat-0 { background: rgba(255,255,255,0.04); }
+    .heat-1 { background: rgba(124,58,237,0.15); }
+    .heat-2 { background: rgba(124,58,237,0.3); }
+    .heat-3 { background: rgba(124,58,237,0.5); }
+    .heat-4 { background: rgba(124,58,237,0.75); }
+    .heatmap-labels { display: flex; gap: 8px; margin-top: 4px; }
+    .heatmap-labels span { flex: 1; text-align: center; font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+
+    /* Bottom Row */
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap-desktop); }
+
+    /* Breakdown */
+    .breakdown-card { padding: var(--space-6); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-2xl); }
+    .breakdown-title { font-size: var(--font-size-desktop-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-5); }
+    .breakdown-item { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .breakdown-label { width: 100px; font-size: var(--font-size-desktop-base); color: var(--color-muted-foreground); }
+    .breakdown-bar { flex: 1; height: 10px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; }
+    .breakdown-fill { height: 100%; border-radius: var(--radius-full); }
+    .fill-grammar { background: var(--color-primary-gradient); }
+    .fill-vocab { background: linear-gradient(135deg, #10b981, #34d399); }
+    .fill-polite { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .breakdown-pct { width: 44px; font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-semibold); color: var(--color-foreground); text-align: right; }
+
+    /* Topics Breakdown */
+    .topic-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--glass-border); }
+    .topic-row:last-child { border-bottom: none; }
+    .topic-emoji { font-size: 22px; }
+    .topic-name { flex: 1; font-size: var(--font-size-desktop-base); color: var(--color-foreground); }
+    .topic-count { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+  </style>
+</head>
+<body>
+  <div class="progress-desktop">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+      <div style="margin-top:auto"><div style="padding:var(--space-4);border-radius:var(--radius-lg);background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;gap:var(--space-3)"><div style="width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--color-primary-light);font-size:14px">AN</div><div><div style="font-size:14px;font-weight:600;color:var(--color-foreground)">Alex Nguyen</div><div style="font-size:12px;color:var(--color-muted-foreground)">JLPT N3 · Level 12</div></div></div></div>
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <div class="page-title">Progress Analytics</div>
+        <div class="period-tabs">
+          <button class="period-tab active">This Week</button>
+          <button class="period-tab">This Month</button>
+          <button class="period-tab">All Time</button>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card"><div class="summary-value" style="color:var(--color-xp)">+320</div><div class="summary-label">XP Earned</div><div class="summary-change change-up">↑ 15% vs last week</div></div>
+        <div class="summary-card"><div class="summary-value">8</div><div class="summary-label">Conversations</div><div class="summary-change change-up">↑ 3 more</div></div>
+        <div class="summary-card"><div class="summary-value" style="color:var(--color-success)">87%</div><div class="summary-label">Accuracy</div><div class="summary-change change-up">↑ 5%</div></div>
+        <div class="summary-card"><div class="summary-value">42m</div><div class="summary-label">Practice Time</div><div class="summary-change change-down">↓ 8 min</div></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Daily XP</div>
+          <div class="chart-bars">
+            <div class="chart-bar-col"><div class="chart-bar" style="height:40%"></div><div class="chart-label">Mon</div></div>
+            <div class="chart-bar-col"><div class="chart-bar" style="height:65%"></div><div class="chart-label">Tue</div></div>
+            <div class="chart-bar-col"><div class="chart-bar" style="height:30%"></div><div class="chart-label">Wed</div></div>
+            <div class="chart-bar-col"><div class="chart-bar" style="height:80%"></div><div class="chart-label">Thu</div></div>
+            <div class="chart-bar-col"><div class="chart-bar" style="height:55%"></div><div class="chart-label">Fri</div></div>
+            <div class="chart-bar-col"><div class="chart-bar active" style="height:90%"></div><div class="chart-label">Sat</div></div>
+            <div class="chart-bar-col"><div class="chart-bar" style="height:20%"></div><div class="chart-label">Sun</div></div>
+          </div>
+        </div>
+        <div class="heatmap-card">
+          <div class="heatmap-title">Activity</div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-0"></div></div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-1"></div></div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-0"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div></div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-0"></div></div>
+          <div class="heatmap-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+        <div class="breakdown-card">
+          <div class="breakdown-title">Accuracy Breakdown</div>
+          <div class="breakdown-item"><div class="breakdown-label">Grammar</div><div class="breakdown-bar"><div class="breakdown-fill fill-grammar" style="width:82%"></div></div><div class="breakdown-pct">82%</div></div>
+          <div class="breakdown-item"><div class="breakdown-label">Vocabulary</div><div class="breakdown-bar"><div class="breakdown-fill fill-vocab" style="width:91%"></div></div><div class="breakdown-pct">91%</div></div>
+          <div class="breakdown-item"><div class="breakdown-label">Politeness</div><div class="breakdown-bar"><div class="breakdown-fill fill-polite" style="width:88%"></div></div><div class="breakdown-pct">88%</div></div>
+        </div>
+        <div class="breakdown-card">
+          <div class="breakdown-title">Most Practiced Topics</div>
+          <div class="topic-row"><div class="topic-emoji">💬</div><div class="topic-name">Daily Standup</div><div class="topic-count">12 sessions</div></div>
+          <div class="topic-row"><div class="topic-emoji">🔍</div><div class="topic-name">Code Review</div><div class="topic-count">8 sessions</div></div>
+          <div class="topic-row"><div class="topic-emoji">🍜</div><div class="topic-name">Lunch Chat</div><div class="topic-count">7 sessions</div></div>
+          <div class="topic-row"><div class="topic-emoji">🐛</div><div class="topic-name">Bug Report</div><div class="topic-count">5 sessions</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

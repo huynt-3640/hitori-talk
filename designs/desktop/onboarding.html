@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .onboarding-desktop {
+      width: 1440px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-background-gradient);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .onboarding-desktop::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: 100px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .onboarding-desktop::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: 300px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Container */
+    .ob-container {
+      width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .ob-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ob-logo {
+      height: 48px;
+      width: auto;
+    }
+
+    .ob-step {
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-muted-foreground);
+    }
+
+    .ob-skip {
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-primary-light);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Progress */
+    .ob-progress {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .ob-progress-dot {
+      flex: 1;
+      height: 4px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .ob-progress-dot.active {
+      background: var(--color-primary-gradient);
+      box-shadow: 0 0 8px var(--color-primary-glow);
+    }
+
+    .ob-progress-dot.done {
+      background: var(--color-primary-light);
+    }
+
+    /* Content Card */
+    .ob-card {
+      padding: var(--space-12);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .ob-emoji {
+      font-size: 56px;
+    }
+
+    .ob-title {
+      font-size: var(--font-size-desktop-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .ob-desc {
+      font-size: var(--font-size-desktop-lg);
+      color: var(--color-muted-foreground);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    /* JLPT Grid */
+    .level-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-top: var(--space-2);
+    }
+
+    .level-card {
+      padding: var(--space-5);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .level-card:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+      transform: translateY(-2px);
+    }
+
+    .level-card.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-soft);
+      box-shadow: 0 0 0 1px var(--color-primary), 0 4px 20px var(--color-primary-glow);
+    }
+
+    .level-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .level-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-lg);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-desktop-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary-light);
+      flex-shrink: 0;
+    }
+
+    .level-card.selected .level-badge {
+      background: var(--color-primary);
+      color: white;
+      border-color: transparent;
+    }
+
+    .level-info { flex: 1; }
+
+    .level-name {
+      font-size: var(--font-size-desktop-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .level-desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+      margin-top: 4px;
+    }
+
+    .level-check {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .level-card.selected .level-check {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+      font-size: 14px;
+    }
+
+    .unsure-link {
+      text-align: center;
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-primary-light);
+      cursor: pointer;
+      padding: var(--space-2);
+    }
+
+    /* Footer */
+    .ob-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .ob-next-btn {
+      padding: var(--space-4) var(--space-10);
+      background: var(--color-primary-gradient);
+      color: white;
+      font-family: var(--font-family);
+      font-size: var(--font-size-desktop-base);
+      font-weight: var(--font-weight-semibold);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--color-primary-glow);
+      transition: all 0.2s;
+    }
+
+    .ob-next-btn:hover {
+      box-shadow: 0 6px 28px var(--color-primary-glow);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="onboarding-desktop">
+    <div class="ob-container">
+      <!-- Header -->
+      <div class="ob-header">
+        <img src="../logo.png" alt="Hitori Talk" class="ob-logo">
+        <div class="ob-step">Step 1 of 3</div>
+        <a class="ob-skip">Skip setup</a>
+      </div>
+
+      <!-- Progress -->
+      <div class="ob-progress">
+        <div class="ob-progress-dot active"></div>
+        <div class="ob-progress-dot"></div>
+        <div class="ob-progress-dot"></div>
+      </div>
+
+      <!-- Card -->
+      <div class="ob-card">
+        <div class="ob-emoji">📖</div>
+        <div class="ob-title">What's your Japanese level?</div>
+        <div class="ob-desc">We'll adjust conversations to match your ability. You can always change this later in Settings.</div>
+
+        <div class="level-grid">
+          <div class="level-card">
+            <div class="level-badge">N5</div>
+            <div class="level-info">
+              <div class="level-name">Beginner</div>
+              <div class="level-desc">Basic greetings, simple phrases</div>
+            </div>
+            <div class="level-check"></div>
+          </div>
+
+          <div class="level-card">
+            <div class="level-badge">N4</div>
+            <div class="level-info">
+              <div class="level-name">Elementary</div>
+              <div class="level-desc">Simple daily conversations</div>
+            </div>
+            <div class="level-check"></div>
+          </div>
+
+          <div class="level-card selected">
+            <div class="level-badge">N3</div>
+            <div class="level-info">
+              <div class="level-name">Intermediate</div>
+              <div class="level-desc">Everyday situations, some workplace</div>
+            </div>
+            <div class="level-check">✓</div>
+          </div>
+
+          <div class="level-card">
+            <div class="level-badge">N2</div>
+            <div class="level-info">
+              <div class="level-name">Upper Intermediate</div>
+              <div class="level-desc">Complex workplace conversations</div>
+            </div>
+            <div class="level-check"></div>
+          </div>
+
+          <div class="level-card full-width">
+            <div class="level-badge">N1</div>
+            <div class="level-info">
+              <div class="level-name">Advanced</div>
+              <div class="level-desc">Nuanced business communication, formal keigo</div>
+            </div>
+            <div class="level-check"></div>
+          </div>
+        </div>
+
+        <div class="unsure-link">Not sure about your level? Take a quick placement test →</div>
+      </div>
+
+      <!-- Footer -->
+      <div class="ob-footer">
+        <button class="ob-next-btn">Continue →</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

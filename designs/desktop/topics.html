@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topics - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .topics-desktop {
+      width: 1440px;
+      min-height: 100vh;
+      display: flex;
+      background: var(--color-background-gradient);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topics-desktop::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: 200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: var(--space-10) var(--space-12);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .page-title {
+      font-size: var(--font-size-desktop-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .page-desc {
+      font-size: var(--font-size-desktop-lg);
+      color: var(--color-muted-foreground);
+    }
+
+    /* Search */
+    .search-bar {
+      width: 320px;
+      padding: var(--space-3) var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition: all 0.2s;
+    }
+
+    .search-bar:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-soft);
+    }
+
+    .search-icon {
+      font-size: 16px;
+      color: var(--color-muted-foreground);
+    }
+
+    .search-input {
+      flex: 1;
+      background: none;
+      border: none;
+      font-family: var(--font-family);
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-foreground);
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--color-muted-foreground);
+    }
+
+    /* Category Tabs */
+    .category-tabs {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .category-tab {
+      padding: var(--space-2) var(--space-5);
+      font-family: var(--font-family);
+      font-size: var(--font-size-desktop-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-muted-foreground);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .category-tab:hover {
+      background: var(--glass-bg-hover);
+    }
+
+    .category-tab.active {
+      background: var(--color-primary-soft);
+      color: var(--color-primary-light);
+      border-color: var(--color-primary);
+    }
+
+    /* Bento Topic Grid */
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--bento-gap-desktop);
+    }
+
+    .topic-card {
+      padding: var(--space-6);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .topic-card:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+      transform: translateY(-3px);
+    }
+
+    .topic-card-featured {
+      grid-column: span 2;
+      background: var(--glass-bg-strong);
+    }
+
+    .topic-emoji {
+      font-size: 36px;
+    }
+
+    .topic-title {
+      font-size: var(--font-size-desktop-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .topic-desc {
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-muted-foreground);
+      line-height: 1.5;
+    }
+
+    .topic-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .topic-category {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-light);
+      padding: 3px 10px;
+      background: var(--color-primary-soft);
+      border-radius: var(--radius-full);
+    }
+
+    .topic-meta {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+    }
+
+    /* Create Topic Card */
+    .topic-card-create {
+      border-style: dashed;
+      border-color: var(--glass-border-strong);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 200px;
+    }
+
+    .topic-card-create .topic-emoji {
+      font-size: 32px;
+      opacity: 0.5;
+    }
+
+    .topic-card-create .topic-title {
+      color: var(--color-muted-foreground);
+      font-size: var(--font-size-desktop-base);
+    }
+  </style>
+</head>
+<body>
+  <div class="topics-desktop">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <img src="../logo.png" alt="Hitori Talk" style="height: 80px; width: auto; object-fit: contain;">
+      </div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item">
+          <span style="font-size: 20px;">🏠</span>
+          <span>Home</span>
+        </a>
+        <a href="#" class="sidebar-nav-item active">
+          <span style="font-size: 20px;">📚</span>
+          <span>Topics</span>
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <span style="font-size: 20px;">🎤</span>
+          <span>Practice</span>
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <span style="font-size: 20px;">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </div>
+      <div style="margin-top: auto;">
+        <div style="padding: var(--space-4); border-radius: var(--radius-lg); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: var(--space-3);">
+          <div style="width: 38px; height: 38px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--color-primary-light); font-size: 14px;">AN</div>
+          <div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--color-foreground);">Alex Nguyen</div>
+            <div style="font-size: 12px; color: var(--color-muted-foreground);">JLPT N3 · Level 12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="header-left">
+          <div class="page-title">Topics</div>
+          <div class="page-desc">Choose a scenario to practice your Japanese</div>
+        </div>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Search topics...">
+        </div>
+      </div>
+
+      <!-- Category Tabs -->
+      <div class="category-tabs">
+        <button class="category-tab active">All Topics</button>
+        <button class="category-tab">Work</button>
+        <button class="category-tab">Technical</button>
+        <button class="category-tab">Business</button>
+        <button class="category-tab">Casual</button>
+        <button class="category-tab">My Topics</button>
+      </div>
+
+      <!-- Topic Grid -->
+      <div class="topic-grid">
+        <div class="topic-card topic-card-featured">
+          <div class="topic-emoji">💬</div>
+          <div class="topic-title">Daily Standup</div>
+          <div class="topic-desc">Practice reporting your progress, blockers, and plans in a typical scrum standup meeting.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Work</div>
+            <div class="topic-meta">12 conversations</div>
+          </div>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-emoji">🔍</div>
+          <div class="topic-title">Code Review</div>
+          <div class="topic-desc">Discuss code changes, suggest improvements.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Technical</div>
+            <div class="topic-meta">8 conversations</div>
+          </div>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-emoji">🐛</div>
+          <div class="topic-title">Bug Report</div>
+          <div class="topic-desc">Report and discuss software bugs.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Technical</div>
+            <div class="topic-meta">5 conversations</div>
+          </div>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-emoji">📋</div>
+          <div class="topic-title">Sprint Planning</div>
+          <div class="topic-desc">Estimate tasks and plan sprints.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Work</div>
+            <div class="topic-meta">3 conversations</div>
+          </div>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-emoji">🤝</div>
+          <div class="topic-title">Client Meeting</div>
+          <div class="topic-desc">Professional client communication.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Business</div>
+            <div class="topic-meta">2 conversations</div>
+          </div>
+        </div>
+
+        <div class="topic-card topic-card-featured">
+          <div class="topic-emoji">🍜</div>
+          <div class="topic-title">Lunch Chat</div>
+          <div class="topic-desc">Casual conversations with colleagues over lunch. Talk about hobbies, weekend plans, food, and daily life.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Casual</div>
+            <div class="topic-meta">7 conversations</div>
+          </div>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-emoji">📊</div>
+          <div class="topic-title">Progress Report</div>
+          <div class="topic-desc">Present project status to stakeholders.</div>
+          <div class="topic-footer">
+            <div class="topic-category">Business</div>
+            <div class="topic-meta">1 conversation</div>
+          </div>
+        </div>
+
+        <div class="topic-card topic-card-create">
+          <div class="topic-emoji">➕</div>
+          <div class="topic-title">Create Custom Topic</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

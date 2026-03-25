@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Dashboard - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .profile-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); padding-bottom: var(--bottom-nav-height); position: relative; overflow: hidden; }
+    .profile-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%); pointer-events: none; }
+
+    /* Top Bar */
+    .top-bar { padding: var(--space-5); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-foreground); cursor: pointer; }
+    .top-bar-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .edit-btn { margin-left: auto; font-size: var(--font-size-sm); color: var(--color-primary-light); font-weight: var(--font-weight-semibold); cursor: pointer; }
+
+    /* Profile Hero */
+    .profile-hero { padding: var(--space-4) var(--space-5) var(--space-6); display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .avatar { width: 80px; height: 80px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: var(--font-weight-bold); color: var(--color-primary-light); border: 2px solid var(--color-primary); }
+    .profile-name { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .profile-detail { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .profile-badges { display: flex; gap: var(--space-2); }
+    .profile-badge { padding: 4px 12px; font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); border-radius: var(--radius-full); }
+    .badge-jlpt { background: var(--color-primary-soft); color: var(--color-primary-light); }
+    .badge-streak { background: rgba(239,68,68,0.12); color: #f87171; }
+
+    /* Content */
+    .content { padding: 0 var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); position: relative; z-index: 1; }
+
+    /* Stats Bento Grid */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap); }
+    .stat-card { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: var(--space-2); }
+    .stat-icon { font-size: 24px; }
+    .stat-value { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .stat-label { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+    .stat-card-xp .stat-value { color: var(--color-xp); }
+    .stat-card-streak .stat-value { color: var(--color-streak); }
+    .stat-card-level .stat-value { color: var(--color-level); }
+
+    /* XP Progress */
+    .xp-section { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); }
+    .xp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
+    .xp-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .xp-detail { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .xp-bar { width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; }
+    .xp-fill { width: 65%; height: 100%; background: var(--color-primary-gradient); border-radius: var(--radius-full); box-shadow: 0 0 12px var(--color-primary-glow); }
+
+    /* Quick Links */
+    .quick-links { display: flex; flex-direction: column; gap: 0; }
+    .quick-link { padding: var(--space-4); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: var(--space-3); cursor: pointer; }
+    .quick-link:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .quick-link:last-child { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+    .quick-link + .quick-link { border-top: none; }
+    .quick-link-icon { font-size: 20px; width: 28px; text-align: center; }
+    .quick-link-label { flex: 1; font-size: var(--font-size-base); color: var(--color-foreground); }
+    .quick-link-arrow { font-size: 14px; color: var(--color-muted-foreground); }
+  </style>
+</head>
+<body>
+  <div class="profile-mobile">
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Profile</div>
+      <div class="edit-btn">Edit</div>
+    </div>
+
+    <div class="profile-hero">
+      <div class="avatar">AN</div>
+      <div class="profile-name">Alex Nguyen</div>
+      <div class="profile-detail">alex.nguyen@email.com</div>
+      <div class="profile-badges">
+        <div class="profile-badge badge-jlpt">JLPT N3</div>
+        <div class="profile-badge badge-streak">🔥 14 days</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card stat-card-xp">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-value">2,450</div>
+          <div class="stat-label">Total XP</div>
+        </div>
+        <div class="stat-card stat-card-streak">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value">14</div>
+          <div class="stat-label">Day Streak</div>
+        </div>
+        <div class="stat-card stat-card-level">
+          <div class="stat-icon">📈</div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">Level</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💬</div>
+          <div class="stat-value">47</div>
+          <div class="stat-label">Conversations</div>
+        </div>
+      </div>
+
+      <div class="xp-section">
+        <div class="xp-header">
+          <div class="xp-title">Level 12 Progress</div>
+          <div class="xp-detail">2,450 / 3,000 XP</div>
+        </div>
+        <div class="xp-bar"><div class="xp-fill"></div></div>
+      </div>
+
+      <div class="quick-links">
+        <div class="quick-link"><div class="quick-link-icon">📊</div><div class="quick-link-label">Progress Analytics</div><div class="quick-link-arrow">›</div></div>
+        <div class="quick-link"><div class="quick-link-icon">📝</div><div class="quick-link-label">Conversation History</div><div class="quick-link-arrow">›</div></div>
+        <div class="quick-link"><div class="quick-link-icon">🏆</div><div class="quick-link-label">Achievements</div><div class="quick-link-arrow">›</div></div>
+        <div class="quick-link"><div class="quick-link-icon">❌</div><div class="quick-link-label">Mistake Log</div><div class="quick-link-arrow">›</div></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+</body>
+</html>

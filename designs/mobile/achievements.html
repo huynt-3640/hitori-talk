@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .achievements-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); padding-bottom: var(--bottom-nav-height); position: relative; overflow: hidden; }
+    .achievements-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%); pointer-events: none; }
+
+    .top-bar { padding: var(--space-5); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-foreground); cursor: pointer; }
+    .top-bar-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .top-bar-count { margin-left: auto; font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+
+    .content { padding: 0 var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); position: relative; z-index: 1; }
+
+    /* Progress Summary */
+    .progress-summary { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); display: flex; align-items: center; gap: var(--space-4); }
+    .trophy-icon { font-size: 36px; }
+    .progress-info { flex: 1; }
+    .progress-label { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .progress-count { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .progress-bar-wrap { width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; margin-top: var(--space-2); }
+    .progress-bar-fill { width: 40%; height: 100%; background: var(--color-primary-gradient); border-radius: var(--radius-full); }
+
+    /* Section */
+    .section-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+
+    /* Achievement Grid */
+    .achievement-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap); }
+
+    .achievement-card { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-2); }
+    .achievement-card.locked { opacity: 0.4; }
+    .achievement-card.earned { border-color: var(--color-primary); background: rgba(124,58,237,0.08); }
+    .achievement-emoji { font-size: 36px; }
+    .achievement-name { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .achievement-desc { font-size: var(--font-size-xs); color: var(--color-muted-foreground); line-height: 1.4; }
+    .achievement-date { font-size: 10px; color: var(--color-primary-light); font-weight: var(--font-weight-medium); }
+    .achievement-lock { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+
+    /* Achievement Progress */
+    .achievement-progress { width: 100%; height: 4px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; }
+    .achievement-progress-fill { height: 100%; background: var(--color-primary-gradient); border-radius: var(--radius-full); }
+  </style>
+</head>
+<body>
+  <div class="achievements-mobile">
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Achievements</div>
+      <div class="top-bar-count">8/20</div>
+    </div>
+
+    <div class="content">
+      <div class="progress-summary">
+        <div class="trophy-icon">🏆</div>
+        <div class="progress-info">
+          <div class="progress-label">Achievements Earned</div>
+          <div class="progress-count">8 of 20</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill"></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Earned</div>
+        <div style="height:var(--space-3)"></div>
+        <div class="achievement-grid">
+          <div class="achievement-card earned">
+            <div class="achievement-emoji">🔥</div>
+            <div class="achievement-name">Hot Streak</div>
+            <div class="achievement-desc">14 day streak</div>
+            <div class="achievement-date">Today</div>
+          </div>
+          <div class="achievement-card earned">
+            <div class="achievement-emoji">💬</div>
+            <div class="achievement-name">Chatty</div>
+            <div class="achievement-desc">Complete 10 conversations</div>
+            <div class="achievement-date">3 days ago</div>
+          </div>
+          <div class="achievement-card earned">
+            <div class="achievement-emoji">⭐</div>
+            <div class="achievement-name">XP Hunter</div>
+            <div class="achievement-desc">Earn 2,000 XP</div>
+            <div class="achievement-date">1 week ago</div>
+          </div>
+          <div class="achievement-card earned">
+            <div class="achievement-emoji">🎯</div>
+            <div class="achievement-name">Sharpshooter</div>
+            <div class="achievement-desc">90% accuracy in a session</div>
+            <div class="achievement-date">1 week ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">In Progress</div>
+        <div style="height:var(--space-3)"></div>
+        <div class="achievement-grid">
+          <div class="achievement-card">
+            <div class="achievement-emoji">🏆</div>
+            <div class="achievement-name">Master</div>
+            <div class="achievement-desc">Complete 50 conversations</div>
+            <div class="achievement-progress"><div class="achievement-progress-fill" style="width:94%"></div></div>
+            <div class="achievement-lock">47/50</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-emoji">📖</div>
+            <div class="achievement-name">Scholar</div>
+            <div class="achievement-desc">Practice all topics</div>
+            <div class="achievement-progress"><div class="achievement-progress-fill" style="width:60%"></div></div>
+            <div class="achievement-lock">6/10</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Locked</div>
+        <div style="height:var(--space-3)"></div>
+        <div class="achievement-grid">
+          <div class="achievement-card locked">
+            <div class="achievement-emoji">🔒</div>
+            <div class="achievement-name">Perfectionist</div>
+            <div class="achievement-desc">0 corrections in 10 sessions</div>
+            <div class="achievement-lock">2/10</div>
+          </div>
+          <div class="achievement-card locked">
+            <div class="achievement-emoji">🔒</div>
+            <div class="achievement-name">Marathon</div>
+            <div class="achievement-desc">30 day streak</div>
+            <div class="achievement-lock">14/30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+</body>
+</html>

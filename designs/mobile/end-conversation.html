@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>End Conversation - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .overlay { width: 390px; height: 844px; background: rgba(15,15,26,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: var(--space-5); }
+    .modal { width: 100%; background: var(--glass-bg-strong); backdrop-filter: var(--glass-blur-strong); border: 1px solid var(--glass-border-strong); border-radius: var(--radius-2xl); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-5); }
+    .modal-emoji { font-size: 48px; text-align: center; }
+    .modal-title { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); text-align: center; }
+    .modal-desc { font-size: var(--font-size-sm); color: var(--color-muted-foreground); text-align: center; line-height: 1.5; }
+
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap); }
+    .summary-card { padding: var(--space-4); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); text-align: center; }
+    .summary-value { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .summary-label { font-size: var(--font-size-xs); color: var(--color-muted-foreground); margin-top: var(--space-1); }
+
+    .xp-earned { padding: var(--space-4); background: var(--color-primary-soft); border-radius: var(--radius-lg); text-align: center; }
+    .xp-value { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-primary-light); }
+    .xp-label { font-size: var(--font-size-sm); color: var(--color-primary-light); opacity: 0.7; }
+
+    .corrections-list { display: flex; flex-direction: column; gap: var(--space-3); }
+    .correction-item { padding: var(--space-3); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.1); border-radius: var(--radius-md); font-size: var(--font-size-sm); }
+    .correction-item .original { text-decoration: line-through; color: var(--color-muted-foreground); }
+    .correction-item .fixed { color: var(--color-success); font-weight: var(--font-weight-medium); }
+
+    .modal-actions { display: flex; flex-direction: column; gap: var(--space-3); }
+    .btn-primary-full { width: 100%; padding: var(--space-4); background: var(--color-primary-gradient); color: white; font-family: var(--font-family); font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); border: none; border-radius: var(--radius-md); cursor: pointer; box-shadow: 0 4px 16px var(--color-primary-glow); }
+    .btn-ghost { width: 100%; padding: var(--space-3); background: none; color: var(--color-muted-foreground); font-family: var(--font-family); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); border: 1px solid var(--glass-border); border-radius: var(--radius-md); cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="modal">
+      <div class="modal-emoji">🎉</div>
+      <div class="modal-title">Great Session!</div>
+      <div class="modal-desc">You practiced for 5 minutes on Daily Standup</div>
+
+      <div class="summary-grid">
+        <div class="summary-card"><div class="summary-value">5:12</div><div class="summary-label">Duration</div></div>
+        <div class="summary-card"><div class="summary-value">8</div><div class="summary-label">Messages</div></div>
+        <div class="summary-card"><div class="summary-value" style="color:var(--color-warning)">1</div><div class="summary-label">Corrections</div></div>
+        <div class="summary-card"><div class="summary-value" style="color:var(--color-success)">87%</div><div class="summary-label">Accuracy</div></div>
+      </div>
+
+      <div class="xp-earned">
+        <div class="xp-value">+50 XP</div>
+        <div class="xp-label">Experience earned</div>
+      </div>
+
+      <div>
+        <div style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-foreground);margin-bottom:var(--space-2)">Corrections to review:</div>
+        <div class="corrections-list">
+          <div class="correction-item">
+            <span class="original">確認しました</span> → <span class="fixed">確認済みです</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-primary-full">Practice Again</button>
+        <button class="btn-ghost">Back to Home</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

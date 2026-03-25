@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empty States - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; display: flex; flex-direction: column; gap: 40px; padding: 20px; background: var(--color-background); }
+
+    .screen { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); padding-bottom: var(--bottom-nav-height); position: relative; overflow: hidden; border-radius: var(--radius-xl); border: 1px solid var(--glass-border); }
+    .screen::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    .screen-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-primary-light); margin-bottom: var(--space-2); }
+
+    .page-header { padding: var(--space-6) var(--space-5) var(--space-4); position: relative; z-index: 1; }
+    .page-title { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+
+    /* Empty State */
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: var(--space-8) var(--space-6); position: relative; z-index: 1; gap: var(--space-4); }
+    .empty-emoji { font-size: 72px; margin-bottom: var(--space-2); }
+    .empty-title { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .empty-desc { font-size: var(--font-size-base); color: var(--color-muted-foreground); line-height: 1.6; max-width: 280px; }
+    .empty-btn { padding: var(--space-3) var(--space-6); background: var(--color-primary-gradient); color: white; font-family: var(--font-family); font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); border: none; border-radius: var(--radius-lg); cursor: pointer; box-shadow: 0 4px 20px var(--color-primary-glow); margin-top: var(--space-2); }
+
+    /* Error State */
+    .error-card { margin: var(--space-5); padding: var(--space-6); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: var(--radius-xl); display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .error-emoji { font-size: 48px; }
+    .error-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-destructive); }
+    .error-desc { font-size: var(--font-size-sm); color: var(--color-muted-foreground); line-height: 1.5; }
+    .error-btn { padding: var(--space-3) var(--space-5); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); font-family: var(--font-family); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-foreground); cursor: pointer; }
+
+    /* Offline Banner */
+    .offline-banner { margin: 0 var(--space-5); padding: var(--space-3) var(--space-4); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .offline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-warning); flex-shrink: 0; }
+    .offline-text { font-size: var(--font-size-sm); color: var(--color-warning); }
+
+    /* Loading Skeleton */
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-grid { padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap); position: relative; z-index: 1; }
+    .skeleton-card { height: 140px; border-radius: var(--radius-xl); }
+    .skeleton-list { padding: 0 var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); position: relative; z-index: 1; }
+    .skeleton-item { height: 64px; border-radius: var(--radius-lg); }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Empty Topics -->
+  <div class="screen-label">Empty State: No Topics</div>
+  <div class="screen">
+    <div class="page-header"><div class="page-title">Topics</div></div>
+    <div class="empty-state">
+      <div class="empty-emoji">📚</div>
+      <div class="empty-title">No Topics Yet</div>
+      <div class="empty-desc">Your topic library is empty. Browse our collection to find the perfect conversation practice.</div>
+      <button class="empty-btn">Browse Topics</button>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+
+  <!-- 2. Empty Conversation History -->
+  <div class="screen-label">Empty State: No Conversations</div>
+  <div class="screen">
+    <div class="page-header"><div class="page-title">History</div></div>
+    <div class="empty-state">
+      <div class="empty-emoji">💬</div>
+      <div class="empty-title">No Conversations Yet</div>
+      <div class="empty-desc">Start your first conversation to practice Japanese and see your progress here.</div>
+      <button class="empty-btn">Start Practice</button>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+
+  <!-- 3. Error State: Network Error -->
+  <div class="screen-label">Error State: Network Error</div>
+  <div class="screen">
+    <div class="page-header"><div class="page-title">Topics</div></div>
+    <div style="padding-top: var(--space-8);">
+      <div class="error-card">
+        <div class="error-emoji">📡</div>
+        <div class="error-title">Connection Failed</div>
+        <div class="error-desc">We couldn't connect to the server. Please check your internet connection and try again.</div>
+        <button class="error-btn">🔄 Retry</button>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+
+  <!-- 4. Error State: AI Unavailable -->
+  <div class="screen-label">Error State: AI Unavailable</div>
+  <div class="screen">
+    <div class="page-header"><div class="page-title">Conversation</div></div>
+    <div style="padding-top: var(--space-8);">
+      <div class="error-card">
+        <div class="error-emoji">🤖</div>
+        <div class="error-title">AI is Taking a Break</div>
+        <div class="error-desc">Our AI tutor is temporarily unavailable. Please try again in a few minutes.</div>
+        <button class="error-btn">🔄 Try Again</button>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+
+  <!-- 5. Offline Banner + Loading Skeleton -->
+  <div class="screen-label">Loading + Offline Banner</div>
+  <div class="screen">
+    <div class="page-header"><div class="page-title">Topics</div></div>
+    <div class="offline-banner">
+      <div class="offline-dot"></div>
+      <div class="offline-text">You're offline. Some features may be limited.</div>
+    </div>
+    <div style="height: var(--space-4);"></div>
+    <div class="skeleton-grid">
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+    </div>
+    <div style="height: var(--space-4);"></div>
+    <div class="skeleton-list">
+      <div class="skeleton skeleton-item"></div>
+      <div class="skeleton skeleton-item"></div>
+      <div class="skeleton skeleton-item"></div>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+
+  <!-- 6. Search No Results -->
+  <div class="screen-label">Empty State: No Search Results</div>
+  <div class="screen">
+    <div class="page-header"><div class="page-title">Topics</div></div>
+    <div style="margin: var(--space-3) var(--space-5); padding: var(--space-3) var(--space-4); background: var(--glass-bg); border: 1px solid var(--color-primary); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-2); position: relative; z-index:1; box-shadow: 0 0 0 3px var(--color-primary-soft);">
+      <span style="font-size:16px; color: var(--color-muted-foreground);">🔍</span>
+      <span style="font-size: var(--font-size-base); color: var(--color-foreground);">asdfghjkl</span>
+    </div>
+    <div class="empty-state">
+      <div class="empty-emoji">🔍</div>
+      <div class="empty-title">No Results Found</div>
+      <div class="empty-desc">We couldn't find any topics matching your search. Try different keywords.</div>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+</body>
+</html>

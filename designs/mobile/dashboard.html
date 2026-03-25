@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .dashboard-mobile {
+      width: 390px;
+      min-height: 844px;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-background-gradient);
+      padding-bottom: var(--bottom-nav-height);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient glow effects */
+    .dashboard-mobile::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -80px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .dashboard-mobile::after {
+      content: '';
+      position: absolute;
+      bottom: 200px;
+      left: -60px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Header */
+    .header {
+      padding: var(--space-5) var(--space-5) var(--space-3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .logo-img {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary-light);
+    }
+
+    /* Greeting */
+    .greeting-section {
+      padding: var(--space-3) var(--space-5) var(--space-5);
+      position: relative;
+      z-index: 1;
+    }
+
+    .greeting {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+      line-height: 1.2;
+    }
+
+    .date {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+      margin-top: var(--space-1);
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+      padding: 0 var(--space-5);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--bento-gap);
+      position: relative;
+      z-index: 1;
+    }
+
+    .bento-item {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .bento-item:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+    }
+
+    /* Span full width */
+    .bento-full { grid-column: 1 / -1; }
+
+    /* Stat Cards */
+    .stat-emoji {
+      font-size: 28px;
+      margin-bottom: var(--space-3);
+    }
+
+    .stat-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-muted-foreground);
+      margin-top: var(--space-1);
+    }
+
+    /* CTA Card */
+    .cta-card {
+      background: var(--color-primary-gradient) !important;
+      border: none !important;
+      box-shadow: 0 8px 32px var(--color-primary-glow);
+      padding: var(--space-5);
+      cursor: pointer;
+    }
+
+    .cta-card:hover {
+      box-shadow: 0 12px 40px rgba(124, 58, 237, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .cta-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cta-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: white;
+      margin-top: var(--space-2);
+    }
+
+    .cta-desc {
+      font-size: var(--font-size-sm);
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: var(--space-1);
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      width: fit-content;
+      margin-top: var(--space-4);
+    }
+
+    /* Goal Card */
+    .goal-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .goal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .goal-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .goal-percent {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary-light);
+    }
+
+    .goal-detail {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+    }
+
+    /* Recent Section */
+    .recent-section {
+      padding: var(--space-5);
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+      margin-bottom: var(--space-4);
+    }
+
+    .recent-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .recent-card {
+      padding: var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      transition: all 0.2s;
+    }
+
+    .recent-card:hover {
+      background: var(--glass-bg-hover);
+    }
+
+    .recent-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .recent-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .recent-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .recent-meta {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+      margin-top: 2px;
+    }
+
+    .recent-xp {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-xp);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-mobile">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <img src="../logo.png" alt="Hitori Talk" class="logo-img">
+      </div>
+      <div class="avatar">AN</div>
+    </div>
+
+    <!-- Greeting -->
+    <div class="greeting-section">
+      <div class="greeting">おはよう！</div>
+      <div class="date">Wednesday, March 25</div>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="bento-grid">
+      <!-- Stats: XP -->
+      <div class="bento-item">
+        <div class="stat-emoji">⭐</div>
+        <div class="stat-value">2,450</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+
+      <!-- Stats: Streak -->
+      <div class="bento-item">
+        <div class="stat-emoji">🔥</div>
+        <div class="stat-value">7 days</div>
+        <div class="stat-label">Current Streak</div>
+      </div>
+
+      <!-- CTA: Quick Practice (full width) -->
+      <div class="bento-item bento-full cta-card">
+        <div class="cta-label">Ready to practice?</div>
+        <div class="cta-title">Start a Conversation</div>
+        <div class="cta-desc">Pick a topic or free talk</div>
+        <button class="cta-btn">▶ Start Now</button>
+      </div>
+
+      <!-- Today's Goal (full width) -->
+      <div class="bento-item bento-full">
+        <div class="goal-content">
+          <div class="goal-header">
+            <div class="goal-title">🎯 Today's Goal</div>
+            <div class="goal-percent">53%</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 53%;"></div>
+          </div>
+          <div class="goal-detail">8 / 15 minutes completed</div>
+        </div>
+      </div>
+
+      <!-- Level -->
+      <div class="bento-item">
+        <div class="stat-emoji">🎯</div>
+        <div class="stat-value">12</div>
+        <div class="stat-label">Level</div>
+      </div>
+
+      <!-- JLPT -->
+      <div class="bento-item">
+        <div class="stat-emoji">📖</div>
+        <div class="stat-value">N3</div>
+        <div class="stat-label">JLPT Level</div>
+      </div>
+    </div>
+
+    <!-- Recent Conversations -->
+    <div class="recent-section">
+      <div class="section-title">Recent</div>
+      <div class="recent-list">
+        <div class="recent-card">
+          <div class="recent-icon">💬</div>
+          <div class="recent-info">
+            <div class="recent-title">Daily Standup</div>
+            <div class="recent-meta">2h ago · 5 min · 0 mistakes</div>
+          </div>
+          <div class="recent-xp">+50</div>
+        </div>
+        <div class="recent-card">
+          <div class="recent-icon">🔍</div>
+          <div class="recent-info">
+            <div class="recent-title">Code Review</div>
+            <div class="recent-meta">Yesterday · 8 min · 3 mistakes</div>
+          </div>
+          <div class="recent-xp">+80</div>
+        </div>
+        <div class="recent-card">
+          <div class="recent-icon">🐛</div>
+          <div class="recent-info">
+            <div class="recent-title">Bug Report</div>
+            <div class="recent-meta">2 days ago · 6 min · 2 mistakes</div>
+          </div>
+          <div class="recent-xp">+60</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <a href="#" class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Home</div>
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">📚</div>
+        <div class="nav-label">Topics</div>
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">🎤</div>
+        <div class="nav-label">Practice</div>
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">⚙️</div>
+        <div class="nav-label">Settings</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

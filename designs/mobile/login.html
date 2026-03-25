@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .login-mobile {
+      width: 390px;
+      min-height: 844px;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-background-gradient);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-mobile::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Logo Area */
+    .logo-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-16) var(--space-5) var(--space-8);
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-area img {
+      height: 80px;
+      width: auto;
+      margin-bottom: var(--space-4);
+    }
+
+    .tagline {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+      text-align: center;
+    }
+
+    /* Auth Card */
+    .auth-card {
+      margin: 0 var(--space-5);
+      padding: var(--space-6);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-md);
+      padding: 3px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: var(--space-3);
+      text-align: center;
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-muted-foreground);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      font-family: var(--font-family);
+    }
+
+    .auth-tab.active {
+      background: var(--color-primary-soft);
+      color: var(--color-primary-light);
+    }
+
+    /* Form */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-foreground-secondary);
+    }
+
+    .form-input {
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--color-foreground);
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-soft);
+    }
+
+    .form-input::placeholder {
+      color: var(--color-muted-foreground);
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      padding: var(--space-4);
+      background: var(--color-primary-gradient);
+      color: white;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--color-primary-glow);
+      transition: all 0.2s;
+    }
+
+    .submit-btn:hover {
+      box-shadow: 0 6px 28px var(--color-primary-glow);
+      transform: translateY(-1px);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+
+    .divider-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Social Buttons */
+    .social-buttons {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: var(--space-3);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-foreground);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .social-btn:hover {
+      background: var(--glass-bg-hover);
+    }
+
+    /* Footer */
+    .auth-footer {
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-footer-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+      line-height: 1.6;
+    }
+
+    .auth-footer-link {
+      color: var(--color-primary-light);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-mobile">
+    <!-- Logo -->
+    <div class="logo-area">
+      <img src="../logo.png" alt="Hitori Talk">
+      <div class="tagline">Practice Japanese conversation with AI</div>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card">
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active">Log In</button>
+        <button class="auth-tab">Sign Up</button>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" placeholder="your@email.com">
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" placeholder="Enter your password">
+      </div>
+
+      <!-- Submit -->
+      <button class="submit-btn">Log In</button>
+
+      <!-- Divider -->
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">or</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Social Login -->
+      <div class="social-buttons">
+        <button class="social-btn">
+          <span>🔵</span>
+          <span>Google</span>
+        </button>
+        <button class="social-btn">
+          <span>⬛</span>
+          <span>GitHub</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      <div class="auth-footer-text">
+        By continuing, you agree to our<br>
+        <a href="#" class="auth-footer-link">Terms of Service</a> and <a href="#" class="auth-footer-link">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

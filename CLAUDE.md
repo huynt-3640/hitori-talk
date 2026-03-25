@@ -6,7 +6,7 @@
 
 ### Tech Stack
 - **Frontend:** Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS
-- **Design:** Pencil.dev MCP + Lunaris style (`pencil-lunaris.pen`)
+- **Design:** Glassmorphism + Bento Grid (Lunaris design system), Tailwind CSS
 - **Backend:** Vercel Serverless Functions
 - **Database:** Supabase (PostgreSQL + Auth + RLS)
 - **AI:** OpenRouter API

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .settings-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); padding-bottom: var(--bottom-nav-height); position: relative; overflow: hidden; }
+    .settings-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    .page-header { padding: var(--space-6) var(--space-5) var(--space-4); position: relative; z-index: 1; }
+    .page-title { font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+
+    .content { padding: 0 var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); position: relative; z-index: 1; }
+
+    /* Profile Card */
+    .profile-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); display: flex; align-items: center; gap: var(--space-4); cursor: pointer; }
+    .profile-avatar { width: 56px; height: 56px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: var(--font-weight-bold); color: var(--color-primary-light); flex-shrink: 0; }
+    .profile-info { flex: 1; }
+    .profile-name { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .profile-detail { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-top: 2px; }
+    .profile-arrow { font-size: 16px; color: var(--color-muted-foreground); }
+
+    /* Settings Groups */
+    .settings-group { display: flex; flex-direction: column; gap: var(--space-1); }
+    .settings-group-title { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 1px; padding: 0 var(--space-1); margin-bottom: var(--space-2); }
+
+    .settings-item { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: var(--space-3); cursor: pointer; transition: all 0.2s; }
+    .settings-item:first-of-type { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .settings-item:last-of-type { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+    .settings-item:only-of-type { border-radius: var(--radius-lg); }
+    .settings-item + .settings-item { border-top: none; }
+    .settings-item:hover { background: var(--glass-bg-hover); }
+
+    .settings-icon { font-size: 20px; width: 32px; text-align: center; }
+    .settings-label { flex: 1; font-size: var(--font-size-base); color: var(--color-foreground); }
+    .settings-value { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .settings-arrow { font-size: 14px; color: var(--color-muted-foreground); }
+
+    /* Toggle */
+    .toggle { width: 44px; height: 24px; border-radius: var(--radius-full); background: rgba(255,255,255,0.1); position: relative; cursor: pointer; }
+    .toggle.on { background: var(--color-primary); }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: transform 0.2s; }
+    .toggle.on::after { transform: translateX(20px); }
+
+    .settings-danger .settings-label { color: var(--color-destructive); }
+
+    .app-version { text-align: center; font-size: var(--font-size-xs); color: var(--color-muted-foreground); padding: var(--space-6) 0; }
+  </style>
+</head>
+<body>
+  <div class="settings-mobile">
+    <div class="page-header"><div class="page-title">Settings</div></div>
+    <div class="content">
+      <!-- Profile -->
+      <div class="profile-card">
+        <div class="profile-avatar">AN</div>
+        <div class="profile-info">
+          <div class="profile-name">Alex Nguyen</div>
+          <div class="profile-detail">JLPT N3 · Level 12 · 2,450 XP</div>
+        </div>
+        <div class="profile-arrow">→</div>
+      </div>
+
+      <!-- Learning -->
+      <div class="settings-group">
+        <div class="settings-group-title">Learning</div>
+        <div class="settings-item"><div class="settings-icon">📖</div><div class="settings-label">JLPT Level</div><div class="settings-value">N3</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🎯</div><div class="settings-label">Daily Goal</div><div class="settings-value">15 min</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🔊</div><div class="settings-label">Auto-play TTS</div><div class="toggle on"></div></div>
+        <div class="settings-item"><div class="settings-icon">🇻🇳</div><div class="settings-label">Show Translations</div><div class="toggle on"></div></div>
+      </div>
+
+      <!-- App -->
+      <div class="settings-group">
+        <div class="settings-group-title">App</div>
+        <div class="settings-item"><div class="settings-icon">🔔</div><div class="settings-label">Notifications</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🔒</div><div class="settings-label">Change Password</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">📊</div><div class="settings-label">Progress Analytics</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🏆</div><div class="settings-label">Achievements</div><div class="settings-arrow">›</div></div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-group">
+        <div class="settings-group-title">Account</div>
+        <div class="settings-item"><div class="settings-icon">📤</div><div class="settings-label">Export Data</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item settings-danger"><div class="settings-icon">🚪</div><div class="settings-label">Log Out</div><div class="settings-arrow">›</div></div>
+      </div>
+
+      <div class="app-version">Hitori Talk v1.0.0</div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+</body>
+</html>

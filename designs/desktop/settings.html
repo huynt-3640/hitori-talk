@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .settings-desktop { width: 1440px; min-height: 100vh; display: flex; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .settings-desktop::before { content: ''; position: absolute; top: -200px; right: 300px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: var(--space-10) var(--space-12); display: flex; flex-direction: column; gap: var(--space-8); position: relative; z-index: 1; max-width: 800px; }
+
+    .page-title { font-size: var(--font-size-desktop-4xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+
+    /* Profile Card */
+    .profile-card { padding: var(--space-6); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-2xl); display: flex; align-items: center; gap: var(--space-5); cursor: pointer; transition: all 0.2s; }
+    .profile-card:hover { background: var(--glass-bg-hover); }
+    .profile-avatar { width: 72px; height: 72px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: var(--font-weight-bold); color: var(--color-primary-light); }
+    .profile-info { flex: 1; }
+    .profile-name { font-size: var(--font-size-desktop-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .profile-detail { font-size: var(--font-size-desktop-base); color: var(--color-muted-foreground); margin-top: 4px; }
+    .profile-edit { padding: 8px 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); font-family: var(--font-family); font-size: var(--font-size-desktop-base); color: var(--color-foreground); cursor: pointer; }
+
+    /* Settings */
+    .settings-group { display: flex; flex-direction: column; gap: 0; }
+    .settings-group-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-3); }
+    .settings-item { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: var(--space-4); cursor: pointer; transition: all 0.2s; }
+    .settings-item:first-of-type { border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+    .settings-item:last-of-type { border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
+    .settings-item:only-of-type { border-radius: var(--radius-xl); }
+    .settings-item + .settings-item { border-top: none; }
+    .settings-item:hover { background: var(--glass-bg-hover); }
+    .settings-icon { font-size: 22px; width: 36px; text-align: center; }
+    .settings-label { flex: 1; font-size: var(--font-size-desktop-base); color: var(--color-foreground); }
+    .settings-desc { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .settings-value { font-size: var(--font-size-desktop-base); color: var(--color-muted-foreground); }
+    .settings-arrow { font-size: 16px; color: var(--color-muted-foreground); }
+    .toggle { width: 48px; height: 26px; border-radius: var(--radius-full); background: rgba(255,255,255,0.1); position: relative; cursor: pointer; flex-shrink: 0; }
+    .toggle.on { background: var(--color-primary); }
+    .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: transform 0.2s; }
+    .toggle.on::after { transform: translateX(22px); }
+    .settings-danger .settings-label { color: var(--color-destructive); }
+  </style>
+</head>
+<body>
+  <div class="settings-desktop">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+      <div style="margin-top:auto"><div style="padding:var(--space-4);border-radius:var(--radius-lg);background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;gap:var(--space-3)"><div style="width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--color-primary-light);font-size:14px">AN</div><div><div style="font-size:14px;font-weight:600;color:var(--color-foreground)">Alex Nguyen</div><div style="font-size:12px;color:var(--color-muted-foreground)">JLPT N3 · Level 12</div></div></div></div>
+    </div>
+
+    <div class="main-content">
+      <div class="page-title">Settings</div>
+
+      <div class="profile-card">
+        <div class="profile-avatar">AN</div>
+        <div class="profile-info">
+          <div class="profile-name">Alex Nguyen</div>
+          <div class="profile-detail">JLPT N3 · Level 12 · 2,450 XP</div>
+        </div>
+        <button class="profile-edit">Edit Profile</button>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-title">Learning</div>
+        <div class="settings-item"><div class="settings-icon">📖</div><div class="settings-label">JLPT Level</div><div class="settings-value">N3</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🎯</div><div class="settings-label">Daily Goal</div><div class="settings-value">15 minutes</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🔊</div><div class="settings-label">Auto-play Text-to-Speech</div><div class="toggle on"></div></div>
+        <div class="settings-item"><div class="settings-icon">🇻🇳</div><div class="settings-label">Show Vietnamese Translations</div><div class="toggle on"></div></div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-title">App</div>
+        <div class="settings-item"><div class="settings-icon">🔔</div><div class="settings-label">Notifications</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item"><div class="settings-icon">🔒</div><div class="settings-label">Change Password</div><div class="settings-arrow">›</div></div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-title">Account</div>
+        <div class="settings-item"><div class="settings-icon">📤</div><div class="settings-label">Export Data</div><div class="settings-arrow">›</div></div>
+        <div class="settings-item settings-danger"><div class="settings-icon">🚪</div><div class="settings-label">Log Out</div><div class="settings-arrow">›</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

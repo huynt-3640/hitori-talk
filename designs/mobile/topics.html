@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topics - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .topics-mobile {
+      width: 390px;
+      min-height: 844px;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-background-gradient);
+      padding-bottom: var(--bottom-nav-height);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topics-mobile::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -60px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Header */
+    .page-header {
+      padding: var(--space-6) var(--space-5) var(--space-4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-title {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .page-desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+      margin-top: var(--space-1);
+    }
+
+    /* Search */
+    .search-bar {
+      margin: var(--space-3) var(--space-5);
+      padding: var(--space-3) var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .search-icon {
+      font-size: 16px;
+      color: var(--color-muted-foreground);
+    }
+
+    .search-input {
+      flex: 1;
+      background: none;
+      border: none;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-foreground);
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--color-muted-foreground);
+    }
+
+    /* Category Tabs */
+    .category-tabs {
+      padding: var(--space-3) var(--space-5);
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .category-tab {
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-muted-foreground);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .category-tab.active {
+      background: var(--color-primary-soft);
+      color: var(--color-primary-light);
+      border-color: var(--color-primary);
+    }
+
+    /* Topic Grid */
+    .topic-grid {
+      padding: var(--space-4) var(--space-5);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--bento-gap);
+      position: relative;
+      z-index: 1;
+    }
+
+    .topic-card {
+      padding: var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .topic-card:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+      transform: translateY(-2px);
+    }
+
+    .topic-emoji {
+      font-size: 32px;
+    }
+
+    .topic-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+      line-height: 1.3;
+    }
+
+    .topic-category {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-light);
+      padding: 2px 8px;
+      background: var(--color-primary-soft);
+      border-radius: var(--radius-full);
+      width: fit-content;
+    }
+
+    .topic-meta {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+    }
+
+    /* Create Topic Card */
+    .topic-card-create {
+      border-style: dashed;
+      border-color: var(--glass-border-strong);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 140px;
+    }
+
+    .topic-card-create .topic-emoji {
+      font-size: 28px;
+      opacity: 0.5;
+    }
+
+    .topic-card-create .topic-title {
+      color: var(--color-muted-foreground);
+      font-size: var(--font-size-sm);
+    }
+  </style>
+</head>
+<body>
+  <div class="topics-mobile">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="page-title">Topics</div>
+      <div class="page-desc">Choose a scenario to practice</div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" placeholder="Search topics...">
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button class="category-tab active">All</button>
+      <button class="category-tab">Work</button>
+      <button class="category-tab">Technical</button>
+      <button class="category-tab">Business</button>
+      <button class="category-tab">Casual</button>
+    </div>
+
+    <!-- Topic Grid -->
+    <div class="topic-grid">
+      <div class="topic-card">
+        <div class="topic-emoji">💬</div>
+        <div class="topic-title">Daily Standup</div>
+        <div class="topic-category">Work</div>
+        <div class="topic-meta">12 conversations</div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-emoji">🔍</div>
+        <div class="topic-title">Code Review</div>
+        <div class="topic-category">Technical</div>
+        <div class="topic-meta">8 conversations</div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-emoji">🐛</div>
+        <div class="topic-title">Bug Report</div>
+        <div class="topic-category">Technical</div>
+        <div class="topic-meta">5 conversations</div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-emoji">📋</div>
+        <div class="topic-title">Sprint Planning</div>
+        <div class="topic-category">Work</div>
+        <div class="topic-meta">3 conversations</div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-emoji">🤝</div>
+        <div class="topic-title">Client Meeting</div>
+        <div class="topic-category">Business</div>
+        <div class="topic-meta">2 conversations</div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-emoji">🍜</div>
+        <div class="topic-title">Lunch Chat</div>
+        <div class="topic-category">Casual</div>
+        <div class="topic-meta">7 conversations</div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-emoji">📊</div>
+        <div class="topic-title">Progress Report</div>
+        <div class="topic-category">Business</div>
+        <div class="topic-meta">1 conversation</div>
+      </div>
+
+      <div class="topic-card topic-card-create">
+        <div class="topic-emoji">➕</div>
+        <div class="topic-title">Create Custom Topic</div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <a href="#" class="nav-item">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Home</div>
+      </a>
+      <a href="#" class="nav-item active">
+        <div class="nav-icon">📚</div>
+        <div class="nav-label">Topics</div>
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">🎤</div>
+        <div class="nav-label">Practice</div>
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">⚙️</div>
+        <div class="nav-label">Settings</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversation History - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .history-desktop { width: 1440px; min-height: 100vh; display: flex; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .history-desktop::before { content: ''; position: absolute; top: -200px; right: 300px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: var(--space-10) var(--space-12); display: flex; flex-direction: column; gap: var(--space-8); position: relative; z-index: 1; max-width: 1000px; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; }
+    .page-title { font-size: var(--font-size-desktop-4xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .filter-tabs { display: flex; gap: var(--space-3); }
+    .filter-tab { padding: var(--space-2) var(--space-5); font-family: var(--font-family); font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-medium); color: var(--color-muted-foreground); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-full); cursor: pointer; }
+    .filter-tab.active { background: var(--color-primary-soft); color: var(--color-primary-light); border-color: var(--color-primary); }
+
+    /* Date Group */
+    .date-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
+
+    .history-list { display: flex; flex-direction: column; gap: var(--space-3); }
+
+    /* History Card */
+    .history-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); display: flex; align-items: center; gap: var(--space-5); cursor: pointer; transition: all 0.2s; }
+    .history-card:hover { background: var(--glass-bg-hover); transform: translateY(-1px); }
+    .history-emoji { font-size: 32px; width: 48px; text-align: center; flex-shrink: 0; }
+    .history-info { flex: 1; }
+    .history-topic { font-size: var(--font-size-desktop-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .history-role { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-top: 2px; }
+    .history-stats { display: flex; gap: var(--space-5); align-items: center; }
+    .history-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 var(--space-3); }
+    .history-stat-value { font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .history-stat-label { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+    .history-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); flex-shrink: 0; }
+    .history-xp { font-size: var(--font-size-desktop-lg); font-weight: var(--font-weight-bold); color: var(--color-xp); }
+    .history-time { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+  </style>
+</head>
+<body>
+  <div class="history-desktop">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+      <div style="margin-top:auto"><div style="padding:var(--space-4);border-radius:var(--radius-lg);background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;gap:var(--space-3)"><div style="width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--color-primary-light);font-size:14px">AN</div><div><div style="font-size:14px;font-weight:600;color:var(--color-foreground)">Alex Nguyen</div><div style="font-size:12px;color:var(--color-muted-foreground)">JLPT N3 · Level 12</div></div></div></div>
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <div class="page-title">History</div>
+        <div class="filter-tabs">
+          <button class="filter-tab active">All</button>
+          <button class="filter-tab">Work</button>
+          <button class="filter-tab">Technical</button>
+          <button class="filter-tab">Business</button>
+          <button class="filter-tab">Casual</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="date-label">Today</div>
+        <div style="height:var(--space-3)"></div>
+        <div class="history-list">
+          <div class="history-card">
+            <div class="history-emoji">💬</div>
+            <div class="history-info"><div class="history-topic">Daily Standup</div><div class="history-role">AI: 田中さん — Senior Developer</div></div>
+            <div class="history-stats">
+              <div class="history-stat"><div class="history-stat-value">5m</div><div class="history-stat-label">Duration</div></div>
+              <div class="history-stat"><div class="history-stat-value">6</div><div class="history-stat-label">Messages</div></div>
+              <div class="history-stat"><div class="history-stat-value">1</div><div class="history-stat-label">Corrections</div></div>
+            </div>
+            <div class="history-right"><div class="history-xp">+50</div><div class="history-time">10:30 AM</div></div>
+          </div>
+          <div class="history-card">
+            <div class="history-emoji">🔍</div>
+            <div class="history-info"><div class="history-topic">Code Review</div><div class="history-role">AI: 山田さん — Tech Lead</div></div>
+            <div class="history-stats">
+              <div class="history-stat"><div class="history-stat-value">7m</div><div class="history-stat-label">Duration</div></div>
+              <div class="history-stat"><div class="history-stat-value">8</div><div class="history-stat-label">Messages</div></div>
+              <div class="history-stat"><div class="history-stat-value">2</div><div class="history-stat-label">Corrections</div></div>
+            </div>
+            <div class="history-right"><div class="history-xp">+65</div><div class="history-time">9:15 AM</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="date-label">Yesterday</div>
+        <div style="height:var(--space-3)"></div>
+        <div class="history-list">
+          <div class="history-card">
+            <div class="history-emoji">🍜</div>
+            <div class="history-info"><div class="history-topic">Lunch Chat</div><div class="history-role">AI: 佐藤さん — Colleague</div></div>
+            <div class="history-stats">
+              <div class="history-stat"><div class="history-stat-value">4m</div><div class="history-stat-label">Duration</div></div>
+              <div class="history-stat"><div class="history-stat-value">5</div><div class="history-stat-label">Messages</div></div>
+              <div class="history-stat"><div class="history-stat-value">0</div><div class="history-stat-label">Corrections</div></div>
+            </div>
+            <div class="history-right"><div class="history-xp">+35</div><div class="history-time">12:20 PM</div></div>
+          </div>
+          <div class="history-card">
+            <div class="history-emoji">💬</div>
+            <div class="history-info"><div class="history-topic">Daily Standup</div><div class="history-role">AI: 田中さん — Senior Developer</div></div>
+            <div class="history-stats">
+              <div class="history-stat"><div class="history-stat-value">3m</div><div class="history-stat-label">Duration</div></div>
+              <div class="history-stat"><div class="history-stat-value">4</div><div class="history-stat-label">Messages</div></div>
+              <div class="history-stat"><div class="history-stat-value">0</div><div class="history-stat-label">Corrections</div></div>
+            </div>
+            <div class="history-right"><div class="history-xp">+40</div><div class="history-time">9:30 AM</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="date-label">March 22, 2026</div>
+        <div style="height:var(--space-3)"></div>
+        <div class="history-list">
+          <div class="history-card">
+            <div class="history-emoji">🐛</div>
+            <div class="history-info"><div class="history-topic">Bug Report</div><div class="history-role">AI: 鈴木さん — QA Lead</div></div>
+            <div class="history-stats">
+              <div class="history-stat"><div class="history-stat-value">6m</div><div class="history-stat-label">Duration</div></div>
+              <div class="history-stat"><div class="history-stat-value">10</div><div class="history-stat-label">Messages</div></div>
+              <div class="history-stat"><div class="history-stat-value">3</div><div class="history-stat-label">Corrections</div></div>
+            </div>
+            <div class="history-right"><div class="history-xp">+55</div><div class="history-time">2:45 PM</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

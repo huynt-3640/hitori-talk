@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversation - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .conv-desktop { width: 1440px; height: 100vh; display: flex; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .conv-desktop::before { content: ''; position: absolute; top: -200px; right: 200px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; position: relative; z-index: 1; }
+
+    /* Top Bar */
+    .conv-header { padding: var(--space-4) var(--space-8); display: flex; align-items: center; gap: var(--space-4); background: rgba(15,15,26,0.6); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--glass-border); }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--color-foreground); }
+    .conv-info { flex: 1; }
+    .conv-topic { font-size: var(--font-size-desktop-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .conv-role { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .conv-timer { font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-semibold); color: var(--color-primary-light); padding: 6px 16px; background: var(--color-primary-soft); border-radius: var(--radius-full); }
+    .end-btn { padding: 8px 20px; font-family: var(--font-family); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-destructive); background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); cursor: pointer; }
+
+    /* Chat + Context Panel */
+    .conv-body { flex: 1; display: flex; overflow: hidden; }
+    .chat-panel { flex: 1; display: flex; flex-direction: column; }
+    .context-panel { width: 340px; border-left: 1px solid var(--glass-border); background: rgba(15,15,26,0.3); backdrop-filter: var(--glass-blur); display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-6); gap: var(--space-6); }
+
+    /* Messages */
+    .messages { flex: 1; overflow-y: auto; padding: var(--space-8) var(--space-10); display: flex; flex-direction: column; gap: var(--space-5); max-width: 800px; margin: 0 auto; width: 100%; }
+    .msg { max-width: 75%; display: flex; flex-direction: column; gap: var(--space-2); }
+    .msg-ai { align-self: flex-start; }
+    .msg-user { align-self: flex-end; }
+    .msg-bubble { padding: var(--space-4) var(--space-5); border-radius: var(--radius-xl); font-size: var(--font-size-desktop-base); line-height: 1.7; }
+    .msg-ai .msg-bubble { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); color: var(--color-foreground); border-bottom-left-radius: var(--radius-sm); }
+    .msg-user .msg-bubble { background: var(--color-primary); color: white; border-bottom-right-radius: var(--radius-sm); box-shadow: 0 2px 16px var(--color-primary-glow); }
+    .msg-meta { font-size: var(--font-size-sm); color: var(--color-muted-foreground); padding: 0 var(--space-2); }
+    .msg-user .msg-meta { text-align: right; }
+    .msg-translation { padding: var(--space-3) var(--space-4); background: rgba(255,255,255,0.03); border-radius: var(--radius-md); font-size: var(--font-size-desktop-base); color: var(--color-foreground-secondary); border-left: 2px solid var(--color-primary-soft); }
+    .msg-correction { padding: var(--space-4); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: var(--radius-md); font-size: var(--font-size-desktop-base); }
+    .correction-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-error); margin-bottom: var(--space-2); }
+    .correction-original { text-decoration: line-through; color: var(--color-muted-foreground); }
+    .correction-fixed { color: var(--color-success); font-weight: var(--font-weight-medium); }
+    .correction-explain { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-top: var(--space-2); }
+
+    /* Input */
+    .input-area { padding: var(--space-4) var(--space-8) var(--space-6); background: rgba(15,15,26,0.6); backdrop-filter: var(--glass-blur); border-top: 1px solid var(--glass-border); }
+    .input-row { display: flex; align-items: flex-end; gap: var(--space-3); max-width: 800px; margin: 0 auto; }
+    .msg-input { flex: 1; padding: var(--space-4); font-family: var(--font-family); font-size: var(--font-size-desktop-base); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); background: var(--glass-bg); color: var(--color-foreground); resize: none; min-height: 48px; }
+    .msg-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+    .msg-input::placeholder { color: var(--color-muted-foreground); }
+    .icon-btn { width: 48px; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; border: none; transition: all 0.2s; }
+    .mic-btn { background: var(--color-primary-gradient); color: white; box-shadow: 0 2px 12px var(--color-primary-glow); }
+    .send-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--color-foreground); }
+
+    /* Context Panel Sections */
+    .ctx-title { font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-3); }
+    .ctx-card { padding: var(--space-4); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); }
+    .ctx-label { font-size: var(--font-size-xs); color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 0.5px; }
+    .ctx-value { font-size: var(--font-size-desktop-base); color: var(--color-foreground); margin-top: var(--space-1); }
+    .ctx-phrase { padding: var(--space-3); background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); margin-top: var(--space-2); }
+    .ctx-phrase-jp { font-size: var(--font-size-desktop-base); color: var(--color-foreground); font-weight: var(--font-weight-medium); }
+    .ctx-phrase-vi { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-top: 2px; }
+    .ctx-stat-row { display: flex; justify-content: space-between; padding: var(--space-2) 0; border-bottom: 1px solid var(--glass-border); }
+    .ctx-stat-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="conv-desktop">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height: 80px; width: auto;"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+      <div style="margin-top:auto"><div style="padding:var(--space-4);border-radius:var(--radius-lg);background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;gap:var(--space-3)"><div style="width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--color-primary-light);font-size:14px">AN</div><div><div style="font-size:14px;font-weight:600;color:var(--color-foreground)">Alex Nguyen</div><div style="font-size:12px;color:var(--color-muted-foreground)">JLPT N3</div></div></div></div>
+    </div>
+
+    <div class="main-content">
+      <div class="conv-header">
+        <div class="back-btn">←</div>
+        <div class="conv-info"><div class="conv-topic">Daily Standup</div><div class="conv-role">AI Role: Senior Developer (田中さん)</div></div>
+        <div class="conv-timer">🕐 3:24</div>
+        <button class="end-btn">End Conversation</button>
+      </div>
+
+      <div class="conv-body">
+        <div class="chat-panel">
+          <div class="messages">
+            <div class="msg msg-ai">
+              <div class="msg-bubble">おはようございます！今日のスタンダップを始めましょう。昨日の進捗を教えてください。</div>
+              <div class="msg-translation">🇻🇳 Chào buổi sáng! Hãy bắt đầu standup hôm nay. Cho tôi biết tiến độ ngày hôm qua.</div>
+              <div class="msg-meta">田中さん · 10:30 AM</div>
+            </div>
+            <div class="msg msg-user">
+              <div class="msg-bubble">昨日はAPIのバグを修正しました。テストも書きました。</div>
+              <div class="msg-meta">You · 10:31 AM</div>
+            </div>
+            <div class="msg msg-ai">
+              <div class="msg-bubble">いいですね！テストまで書いたのは素晴らしいです。今日の予定はありますか？</div>
+              <div class="msg-translation">🇻🇳 Tốt lắm! Việc viết cả test nữa thật tuyệt vời. Hôm nay có kế hoạch gì không?</div>
+              <div class="msg-meta">田中さん · 10:31 AM</div>
+            </div>
+            <div class="msg msg-user">
+              <div class="msg-bubble">今日はフロントエンドの新しい機能を開発する予定です。デザインはもう確認しました。</div>
+              <div class="msg-meta">You · 10:32 AM</div>
+            </div>
+            <div class="msg msg-ai">
+              <div class="msg-correction">
+                <div class="correction-label">✏️ Correction</div>
+                <div><span class="correction-original">デザインはもう確認しました</span> → <span class="correction-fixed">デザインはもう確認済みです</span></div>
+                <div class="correction-explain">Use 確認済み (kakunin-zumi) for "already confirmed" in business context — sounds more professional.</div>
+              </div>
+              <div class="msg-bubble">なるほど、フロントエンドですね。何かブロッカーはありますか？</div>
+              <div class="msg-translation">🇻🇳 Vậy à, frontend nhỉ. Có blocker nào không?</div>
+              <div class="msg-meta">田中さん · 10:32 AM</div>
+            </div>
+          </div>
+          <div class="input-area">
+            <div class="input-row">
+              <textarea class="msg-input" placeholder="Type in Japanese... (or press mic to speak)" rows="1"></textarea>
+              <button class="icon-btn mic-btn">🎤</button>
+              <button class="icon-btn send-btn">➤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-panel">
+          <div>
+            <div class="ctx-title">📋 Scenario</div>
+            <div class="ctx-card">
+              <div class="ctx-label">Your Role</div>
+              <div class="ctx-value">Developer reporting progress</div>
+              <div style="height:var(--space-3)"></div>
+              <div class="ctx-label">AI Role</div>
+              <div class="ctx-value">田中さん — Senior Developer</div>
+              <div style="height:var(--space-3)"></div>
+              <div class="ctx-label">Context</div>
+              <div class="ctx-value">Morning standup meeting, report yesterday's work and today's plan.</div>
+            </div>
+          </div>
+          <div>
+            <div class="ctx-title">💡 Useful Phrases</div>
+            <div class="ctx-phrase"><div class="ctx-phrase-jp">昨日は〜をしました</div><div class="ctx-phrase-vi">Hôm qua tôi đã làm ~</div></div>
+            <div class="ctx-phrase"><div class="ctx-phrase-jp">今日は〜する予定です</div><div class="ctx-phrase-vi">Hôm nay dự định làm ~</div></div>
+            <div class="ctx-phrase"><div class="ctx-phrase-jp">ブロッカーはありません</div><div class="ctx-phrase-vi">Không có blocker</div></div>
+          </div>
+          <div>
+            <div class="ctx-title">📊 This Session</div>
+            <div class="ctx-card">
+              <div class="ctx-stat-row"><span style="color:var(--color-muted-foreground)">Duration</span><span style="font-weight:600">3:24</span></div>
+              <div class="ctx-stat-row"><span style="color:var(--color-muted-foreground)">Messages</span><span style="font-weight:600">4</span></div>
+              <div class="ctx-stat-row"><span style="color:var(--color-muted-foreground)">Corrections</span><span style="font-weight:600;color:var(--color-warning)">1</span></div>
+              <div class="ctx-stat-row"><span style="color:var(--color-muted-foreground)">XP (est.)</span><span style="font-weight:600;color:var(--color-xp)">+40</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

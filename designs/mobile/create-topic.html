@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Custom Topic - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .create-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .create-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%); pointer-events: none; }
+
+    .top-bar { padding: var(--space-5); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-foreground); cursor: pointer; }
+    .top-bar-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+
+    .content { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); position: relative; z-index: 1; flex: 1; }
+
+    /* Form */
+    .form-group { display: flex; flex-direction: column; gap: var(--space-2); }
+    .form-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-foreground-secondary); }
+    .form-input { padding: var(--space-3) var(--space-4); font-family: var(--font-family); font-size: var(--font-size-base); border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); color: var(--color-foreground); }
+    .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+    .form-textarea { padding: var(--space-3) var(--space-4); font-family: var(--font-family); font-size: var(--font-size-base); border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); color: var(--color-foreground); resize: vertical; min-height: 80px; }
+    .form-textarea:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+    .form-hint { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+    .form-select { padding: var(--space-3) var(--space-4); font-family: var(--font-family); font-size: var(--font-size-base); border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); color: var(--color-foreground); appearance: none; }
+
+    /* Emoji Picker */
+    .emoji-row { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .emoji-option { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 24px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: var(--glass-bg); cursor: pointer; }
+    .emoji-option.selected { border-color: var(--color-primary); background: var(--color-primary-soft); box-shadow: 0 0 0 2px var(--color-primary-soft); }
+
+    /* Preview */
+    .preview-card { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); display: flex; flex-direction: column; gap: var(--space-3); }
+    .preview-label { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-muted-foreground); text-transform: uppercase; letter-spacing: 1px; }
+    .preview-row { display: flex; align-items: center; gap: var(--space-3); }
+    .preview-emoji { font-size: 28px; }
+    .preview-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .preview-category { font-size: var(--font-size-xs); color: var(--color-primary-light); padding: 2px 8px; background: var(--color-primary-soft); border-radius: var(--radius-full); }
+
+    /* Footer */
+    .footer { padding: var(--space-5); margin-top: auto; }
+    .create-btn { width: 100%; padding: var(--space-4); background: var(--color-primary-gradient); color: white; font-family: var(--font-family); font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); border: none; border-radius: var(--radius-lg); cursor: pointer; box-shadow: 0 4px 20px var(--color-primary-glow); }
+  </style>
+</head>
+<body>
+  <div class="create-mobile">
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Create Topic</div>
+    </div>
+
+    <div class="content">
+      <div class="form-group">
+        <div class="form-label">Topic Name</div>
+        <input type="text" class="form-input" placeholder="e.g., Sprint Retrospective">
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Icon</div>
+        <div class="emoji-row">
+          <div class="emoji-option selected">💬</div>
+          <div class="emoji-option">📋</div>
+          <div class="emoji-option">🔍</div>
+          <div class="emoji-option">🐛</div>
+          <div class="emoji-option">🤝</div>
+          <div class="emoji-option">📊</div>
+          <div class="emoji-option">🍜</div>
+          <div class="emoji-option">☕</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Category</div>
+        <select class="form-select">
+          <option selected>Work</option>
+          <option>Technical</option>
+          <option>Business</option>
+          <option>Casual</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Description</div>
+        <textarea class="form-textarea" placeholder="Describe the scenario you want to practice..."></textarea>
+        <div class="form-hint">This helps the AI set up the right context</div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">AI Role (optional)</div>
+        <input type="text" class="form-input" placeholder="e.g., Project Manager, Team Lead">
+        <div class="form-hint">Leave empty for AI to choose a fitting role</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Preview</div>
+        <div class="preview-row">
+          <div class="preview-emoji">💬</div>
+          <div>
+            <div class="preview-title">Sprint Retrospective</div>
+            <div class="preview-category">Work</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="create-btn">Create Topic</button>
+    </div>
+  </div>
+</body>
+</html>

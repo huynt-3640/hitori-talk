@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empty States - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; display: flex; flex-direction: column; gap: 60px; background: var(--color-background); }
+
+    .screen { width: 1440px; height: 800px; display: flex; background: var(--color-background-gradient); position: relative; overflow: hidden; border: 1px solid var(--glass-border); }
+    .screen::before { content: ''; position: absolute; top: -200px; right: 300px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    .screen-label { font-size: var(--font-size-desktop-lg); font-weight: var(--font-weight-bold); color: var(--color-primary-light); padding: 40px 40px 8px; }
+
+    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: var(--space-10) var(--space-12); display: flex; flex-direction: column; gap: var(--space-8); position: relative; z-index: 1; }
+    .page-title { font-size: var(--font-size-desktop-4xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+
+    /* Empty State */
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: var(--space-4); }
+    .empty-emoji { font-size: 80px; margin-bottom: var(--space-3); }
+    .empty-title { font-size: var(--font-size-desktop-2xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .empty-desc { font-size: var(--font-size-desktop-base); color: var(--color-muted-foreground); line-height: 1.6; max-width: 400px; }
+    .empty-btn { padding: var(--space-3) var(--space-8); background: var(--color-primary-gradient); color: white; font-family: var(--font-family); font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-semibold); border: none; border-radius: var(--radius-lg); cursor: pointer; box-shadow: 0 4px 20px var(--color-primary-glow); margin-top: var(--space-3); }
+
+    /* Error Card */
+    .error-card { padding: var(--space-8); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: var(--radius-2xl); display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-4); max-width: 500px; margin: var(--space-10) auto; }
+    .error-emoji { font-size: 56px; }
+    .error-title { font-size: var(--font-size-desktop-xl); font-weight: var(--font-weight-bold); color: var(--color-destructive); }
+    .error-desc { font-size: var(--font-size-desktop-base); color: var(--color-muted-foreground); line-height: 1.5; }
+    .error-btn { padding: var(--space-3) var(--space-6); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); font-family: var(--font-family); font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-semibold); color: var(--color-foreground); cursor: pointer; }
+
+    /* Offline Banner */
+    .offline-banner { padding: var(--space-3) var(--space-5); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-3); }
+    .offline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-warning); }
+    .offline-text { font-size: var(--font-size-desktop-base); color: var(--color-warning); }
+
+    /* Loading Skeleton */
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-xl); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--bento-gap-desktop); }
+    .skeleton-card { height: 200px; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Empty Topics -->
+  <div class="screen-label">Empty State: No Topics</div>
+  <div class="screen">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="page-title">Topics</div>
+      <div class="empty-state">
+        <div class="empty-emoji">📚</div>
+        <div class="empty-title">No Topics Yet</div>
+        <div class="empty-desc">Your topic library is empty. Browse our collection to find the perfect conversation practice.</div>
+        <button class="empty-btn">Browse Topics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Error State: Network Error -->
+  <div class="screen-label">Error State: Network Error</div>
+  <div class="screen">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="page-title">Topics</div>
+      <div class="offline-banner">
+        <div class="offline-dot"></div>
+        <div class="offline-text">You're offline. Some features may be limited.</div>
+      </div>
+      <div class="error-card">
+        <div class="error-emoji">📡</div>
+        <div class="error-title">Connection Failed</div>
+        <div class="error-desc">We couldn't connect to the server. Please check your internet connection and try again.</div>
+        <button class="error-btn">🔄 Retry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Loading Skeleton -->
+  <div class="screen-label">Loading State: Skeleton</div>
+  <div class="screen">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="page-title">Topics</div>
+      <div class="skeleton-grid">
+        <div class="skeleton skeleton-card" style="grid-column:span 2"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card" style="grid-column:span 2"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

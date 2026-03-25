@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic Detail - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .detail-mobile {
+      width: 390px;
+      min-height: 844px;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-background-gradient);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .detail-mobile::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -40px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      padding: var(--space-5);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--color-foreground);
+    }
+
+    .top-bar-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: var(--space-4) var(--space-5) var(--space-6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--space-4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-emoji {
+      font-size: 64px;
+      padding: var(--space-6);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-2xl);
+    }
+
+    .hero-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .hero-category {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-light);
+      padding: 4px 14px;
+      background: var(--color-primary-soft);
+      border-radius: var(--radius-full);
+    }
+
+    .hero-desc {
+      font-size: var(--font-size-base);
+      color: var(--color-muted-foreground);
+      line-height: 1.6;
+    }
+
+    /* Content */
+    .detail-content {
+      padding: 0 var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Info Cards */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--bento-gap);
+    }
+
+    .info-card {
+      padding: var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .info-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    /* Example Phrases */
+    .section-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .phrase-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .phrase-card {
+      padding: var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .phrase-jp {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .phrase-vi {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+    }
+
+    /* Past Conversations */
+    .past-card {
+      padding: var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .past-date {
+      flex: 1;
+    }
+
+    .past-date-main {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .past-date-sub {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted-foreground);
+      margin-top: 2px;
+    }
+
+    .past-xp {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-xp);
+    }
+
+    /* Sticky Footer */
+    .sticky-footer {
+      margin-top: auto;
+      padding: var(--space-5);
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: var(--space-4);
+      background: var(--color-primary-gradient);
+      color: white;
+      font-family: var(--font-family);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      box-shadow: 0 4px 24px var(--color-primary-glow);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .start-btn:hover {
+      box-shadow: 0 6px 32px rgba(124, 58, 237, 0.5);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="detail-mobile">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Topic</div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-emoji">💬</div>
+      <div class="hero-title">Daily Standup</div>
+      <div class="hero-category">Work</div>
+      <div class="hero-desc">Practice reporting your progress, blockers, and today's plan in a typical scrum standup meeting.</div>
+    </div>
+
+    <!-- Content -->
+    <div class="detail-content">
+      <!-- Stats -->
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-label">Practiced</div>
+          <div class="info-value">12x</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Avg Duration</div>
+          <div class="info-value">5 min</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Total XP</div>
+          <div class="info-value">+420</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Accuracy</div>
+          <div class="info-value">87%</div>
+        </div>
+      </div>
+
+      <!-- Example Phrases -->
+      <div>
+        <div class="section-title">Example Phrases</div>
+        <div style="height: var(--space-3);"></div>
+        <div class="phrase-list">
+          <div class="phrase-card">
+            <div class="phrase-jp">昨日はAPIの修正をしました。</div>
+            <div class="phrase-vi">Hôm qua tôi đã sửa API.</div>
+          </div>
+          <div class="phrase-card">
+            <div class="phrase-jp">今日はテストを書く予定です。</div>
+            <div class="phrase-vi">Hôm nay tôi dự định viết test.</div>
+          </div>
+          <div class="phrase-card">
+            <div class="phrase-jp">ブロッカーは特にありません。</div>
+            <div class="phrase-vi">Không có blocker đặc biệt nào.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Conversations -->
+      <div>
+        <div class="section-title">Recent Sessions</div>
+        <div style="height: var(--space-3);"></div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+          <div class="past-card">
+            <div class="past-date">
+              <div class="past-date-main">Today, 10:30 AM</div>
+              <div class="past-date-sub">5 min · 0 mistakes</div>
+            </div>
+            <div class="past-xp">+50</div>
+          </div>
+          <div class="past-card">
+            <div class="past-date">
+              <div class="past-date-main">Yesterday, 9:15 AM</div>
+              <div class="past-date-sub">4 min · 1 mistake</div>
+            </div>
+            <div class="past-xp">+40</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start Button -->
+    <div class="sticky-footer">
+      <button class="start-btn">▶ Start Conversation</button>
+    </div>
+  </div>
+</body>
+</html>

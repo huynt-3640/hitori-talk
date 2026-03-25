@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic Detail - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    .detail-desktop {
+      width: 1440px;
+      min-height: 100vh;
+      display: flex;
+      background: var(--color-background-gradient);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .detail-desktop::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: 300px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: var(--space-10) var(--space-12);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Back Nav */
+    .back-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--color-foreground);
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--glass-bg-hover);
+    }
+
+    .breadcrumb {
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-muted-foreground);
+    }
+
+    .breadcrumb a {
+      color: var(--color-primary-light);
+      text-decoration: none;
+    }
+
+    /* Two Column Layout */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--space-10);
+    }
+
+    /* Left Column */
+    .detail-left {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      gap: var(--space-8);
+      align-items: flex-start;
+    }
+
+    .hero-emoji-wrap {
+      font-size: 64px;
+      padding: var(--space-8);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-2xl);
+      flex-shrink: 0;
+    }
+
+    .hero-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .hero-title {
+      font-size: var(--font-size-desktop-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    .hero-category {
+      font-size: var(--font-size-desktop-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-light);
+      padding: 4px 16px;
+      background: var(--color-primary-soft);
+      border-radius: var(--radius-full);
+      width: fit-content;
+    }
+
+    .hero-desc {
+      font-size: var(--font-size-desktop-lg);
+      color: var(--color-muted-foreground);
+      line-height: 1.7;
+    }
+
+    .start-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4) var(--space-10);
+      background: var(--color-primary-gradient);
+      color: white;
+      font-family: var(--font-family);
+      font-size: var(--font-size-desktop-lg);
+      font-weight: var(--font-weight-semibold);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      box-shadow: 0 4px 24px var(--color-primary-glow);
+      transition: all 0.2s;
+      width: fit-content;
+    }
+
+    .start-btn:hover {
+      box-shadow: 0 8px 36px rgba(124, 58, 237, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Stats Grid */
+    .stats-bento {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--bento-gap-desktop);
+    }
+
+    .stat-card {
+      padding: var(--space-5);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .stat-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-desktop-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+    }
+
+    /* Example Phrases */
+    .section-title {
+      font-size: var(--font-size-desktop-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+      margin-bottom: var(--space-4);
+    }
+
+    .phrase-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .phrase-card {
+      padding: var(--space-5);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .phrase-jp {
+      font-size: var(--font-size-desktop-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .phrase-vi {
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-muted-foreground);
+    }
+
+    /* Right Column */
+    .detail-right {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    /* Past Sessions */
+    .session-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .session-card {
+      padding: var(--space-4) var(--space-5);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .session-card:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+    }
+
+    .session-info {
+      flex: 1;
+    }
+
+    .session-date {
+      font-size: var(--font-size-desktop-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-foreground);
+    }
+
+    .session-meta {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted-foreground);
+      margin-top: 2px;
+    }
+
+    .session-xp {
+      font-size: var(--font-size-desktop-base);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-xp);
+    }
+
+    /* Tips Card */
+    .tips-card {
+      padding: var(--space-6);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+    }
+
+    .tips-title {
+      font-size: var(--font-size-desktop-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-foreground);
+      margin-bottom: var(--space-4);
+    }
+
+    .tip-item {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .tip-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .tip-emoji {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .tip-text {
+      font-size: var(--font-size-desktop-base);
+      color: var(--color-foreground-secondary);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="detail-desktop">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <img src="../logo.png" alt="Hitori Talk" style="height: 80px; width: auto; object-fit: contain;">
+      </div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item">
+          <span style="font-size: 20px;">🏠</span>
+          <span>Home</span>
+        </a>
+        <a href="#" class="sidebar-nav-item active">
+          <span style="font-size: 20px;">📚</span>
+          <span>Topics</span>
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <span style="font-size: 20px;">🎤</span>
+          <span>Practice</span>
+        </a>
+        <a href="#" class="sidebar-nav-item">
+          <span style="font-size: 20px;">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </div>
+      <div style="margin-top: auto;">
+        <div style="padding: var(--space-4); border-radius: var(--radius-lg); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: var(--space-3);">
+          <div style="width: 38px; height: 38px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--color-primary-light); font-size: 14px;">AN</div>
+          <div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--color-foreground);">Alex Nguyen</div>
+            <div style="font-size: 12px; color: var(--color-muted-foreground);">JLPT N3 · Level 12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Back Nav -->
+      <div class="back-nav">
+        <div class="back-btn">←</div>
+        <div class="breadcrumb"><a href="#">Topics</a> / Daily Standup</div>
+      </div>
+
+      <!-- Two Column Layout -->
+      <div class="detail-grid">
+        <!-- Left Column -->
+        <div class="detail-left">
+          <!-- Hero -->
+          <div class="hero">
+            <div class="hero-emoji-wrap">💬</div>
+            <div class="hero-info">
+              <div class="hero-title">Daily Standup</div>
+              <div class="hero-category">Work</div>
+              <div class="hero-desc">Practice reporting your progress, blockers, and today's plan in a typical scrum standup meeting with your Japanese team.</div>
+              <button class="start-btn">▶ Start Conversation</button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-bento">
+            <div class="stat-card">
+              <div class="stat-label">Practiced</div>
+              <div class="stat-value">12x</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Avg Duration</div>
+              <div class="stat-value">5 min</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total XP</div>
+              <div class="stat-value" style="color: var(--color-xp);">+420</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Accuracy</div>
+              <div class="stat-value" style="color: var(--color-success);">87%</div>
+            </div>
+          </div>
+
+          <!-- Example Phrases -->
+          <div>
+            <div class="section-title">Example Phrases</div>
+            <div class="phrase-list">
+              <div class="phrase-card">
+                <div class="phrase-jp">昨日はAPIの修正をしました。</div>
+                <div class="phrase-vi">Hôm qua tôi đã sửa API.</div>
+              </div>
+              <div class="phrase-card">
+                <div class="phrase-jp">今日はテストを書く予定です。</div>
+                <div class="phrase-vi">Hôm nay tôi dự định viết test.</div>
+              </div>
+              <div class="phrase-card">
+                <div class="phrase-jp">ブロッカーは特にありません。</div>
+                <div class="phrase-vi">Không có blocker đặc biệt nào.</div>
+              </div>
+              <div class="phrase-card">
+                <div class="phrase-jp">プルリクエストのレビューをお願いします。</div>
+                <div class="phrase-vi">Xin hãy review pull request.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="detail-right">
+          <!-- Recent Sessions -->
+          <div>
+            <div class="section-title">Recent Sessions</div>
+            <div class="session-list">
+              <div class="session-card">
+                <div class="session-info">
+                  <div class="session-date">Today, 10:30 AM</div>
+                  <div class="session-meta">5 min · 0 mistakes</div>
+                </div>
+                <div class="session-xp">+50 XP</div>
+              </div>
+              <div class="session-card">
+                <div class="session-info">
+                  <div class="session-date">Yesterday, 9:15 AM</div>
+                  <div class="session-meta">4 min · 1 mistake</div>
+                </div>
+                <div class="session-xp">+40 XP</div>
+              </div>
+              <div class="session-card">
+                <div class="session-info">
+                  <div class="session-date">Mar 23, 2:00 PM</div>
+                  <div class="session-meta">6 min · 2 mistakes</div>
+                </div>
+                <div class="session-xp">+45 XP</div>
+              </div>
+              <div class="session-card">
+                <div class="session-info">
+                  <div class="session-date">Mar 22, 10:00 AM</div>
+                  <div class="session-meta">3 min · 0 mistakes</div>
+                </div>
+                <div class="session-xp">+35 XP</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tips -->
+          <div class="tips-card">
+            <div class="tips-title">💡 Tips for Standup</div>
+            <div class="tip-item">
+              <div class="tip-emoji">1️⃣</div>
+              <div class="tip-text">Start with 昨日は... to report what you did yesterday</div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-emoji">2️⃣</div>
+              <div class="tip-text">Use 今日は...予定です for today's plan</div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-emoji">3️⃣</div>
+              <div class="tip-text">End with blockers: 問題は特にありません</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

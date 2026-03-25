@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Dashboard - Desktop</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .profile-desktop { width: 1440px; min-height: 100vh; display: flex; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .profile-desktop::before { content: ''; position: absolute; top: -200px; right: 300px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: var(--space-10) var(--space-12); display: flex; flex-direction: column; gap: var(--space-8); position: relative; z-index: 1; max-width: 1000px; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; }
+    .page-title { font-size: var(--font-size-desktop-4xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .edit-btn { padding: 8px 24px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); font-family: var(--font-family); font-size: var(--font-size-desktop-base); color: var(--color-foreground); cursor: pointer; }
+
+    /* Profile Hero */
+    .profile-hero { padding: var(--space-6); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-2xl); display: flex; align-items: center; gap: var(--space-6); }
+    .avatar { width: 96px; height: 96px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: var(--font-weight-bold); color: var(--color-primary-light); border: 2px solid var(--color-primary); flex-shrink: 0; }
+    .hero-info { flex: 1; }
+    .hero-name { font-size: var(--font-size-desktop-2xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .hero-email { font-size: var(--font-size-desktop-base); color: var(--color-muted-foreground); margin-top: 4px; }
+    .hero-badges { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+    .profile-badge { padding: 4px 14px; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); border-radius: var(--radius-full); }
+    .badge-jlpt { background: var(--color-primary-soft); color: var(--color-primary-light); }
+    .badge-streak { background: rgba(239,68,68,0.12); color: #f87171; }
+    .badge-level { background: rgba(16,185,129,0.12); color: #34d399; }
+    .hero-xp { text-align: right; }
+    .hero-xp-value { font-size: var(--font-size-desktop-3xl); font-weight: var(--font-weight-bold); color: var(--color-xp); }
+    .hero-xp-label { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .hero-xp-bar { width: 200px; height: 8px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; margin-top: var(--space-2); }
+    .hero-xp-fill { width: 65%; height: 100%; background: var(--color-primary-gradient); border-radius: var(--radius-full); box-shadow: 0 0 12px var(--color-primary-glow); }
+
+    /* Stats Bento */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--bento-gap-desktop); }
+    .stat-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); display: flex; flex-direction: column; gap: var(--space-2); }
+    .stat-icon { font-size: 28px; }
+    .stat-value { font-size: var(--font-size-desktop-3xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .stat-label { font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .stat-card-xp .stat-value { color: var(--color-xp); }
+    .stat-card-streak .stat-value { color: var(--color-streak); }
+    .stat-card-level .stat-value { color: var(--color-level); }
+
+    /* Two Column */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap-desktop); }
+    .section-title { font-size: var(--font-size-desktop-xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-4); }
+
+    /* Recent Achievements */
+    .achievement-item { padding: var(--space-4); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+    .achievement-emoji { font-size: 28px; }
+    .achievement-info { flex: 1; }
+    .achievement-name { font-size: var(--font-size-desktop-base); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .achievement-desc { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-top: 2px; }
+    .achievement-date { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+
+    /* Quick Links */
+    .quick-link { padding: var(--space-4); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); display: flex; align-items: center; gap: var(--space-3); cursor: pointer; margin-bottom: var(--space-3); transition: all 0.2s; }
+    .quick-link:hover { background: var(--glass-bg-hover); }
+    .quick-link-icon { font-size: 22px; width: 32px; text-align: center; }
+    .quick-link-label { flex: 1; font-size: var(--font-size-desktop-base); color: var(--color-foreground); }
+    .quick-link-arrow { font-size: 16px; color: var(--color-muted-foreground); }
+  </style>
+</head>
+<body>
+  <div class="profile-desktop">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="../logo.png" alt="Hitori Talk" style="height:80px;width:auto"></div>
+      <div class="sidebar-nav">
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🏠</span><span>Home</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">📚</span><span>Topics</span></a>
+        <a href="#" class="sidebar-nav-item"><span style="font-size:20px">🎤</span><span>Practice</span></a>
+        <a href="#" class="sidebar-nav-item active"><span style="font-size:20px">⚙️</span><span>Settings</span></a>
+      </div>
+      <div style="margin-top:auto"><div style="padding:var(--space-4);border-radius:var(--radius-lg);background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;gap:var(--space-3)"><div style="width:38px;height:38px;border-radius:var(--radius-full);background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--color-primary-light);font-size:14px">AN</div><div><div style="font-size:14px;font-weight:600;color:var(--color-foreground)">Alex Nguyen</div><div style="font-size:12px;color:var(--color-muted-foreground)">JLPT N3 · Level 12</div></div></div></div>
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <div class="page-title">Profile</div>
+        <button class="edit-btn">Edit Profile</button>
+      </div>
+
+      <div class="profile-hero">
+        <div class="avatar">AN</div>
+        <div class="hero-info">
+          <div class="hero-name">Alex Nguyen</div>
+          <div class="hero-email">alex.nguyen@email.com</div>
+          <div class="hero-badges">
+            <div class="profile-badge badge-jlpt">JLPT N3</div>
+            <div class="profile-badge badge-streak">🔥 14 day streak</div>
+            <div class="profile-badge badge-level">Level 12</div>
+          </div>
+        </div>
+        <div class="hero-xp">
+          <div class="hero-xp-value">2,450</div>
+          <div class="hero-xp-label">Total XP · 550 to Level 13</div>
+          <div class="hero-xp-bar"><div class="hero-xp-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-card-xp"><div class="stat-icon">⭐</div><div class="stat-value">2,450</div><div class="stat-label">Total XP</div></div>
+        <div class="stat-card stat-card-streak"><div class="stat-icon">🔥</div><div class="stat-value">14</div><div class="stat-label">Day Streak</div></div>
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-value">47</div><div class="stat-label">Conversations</div></div>
+        <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-value">6.2h</div><div class="stat-label">Total Practice</div></div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="section-title">Recent Achievements</div>
+          <div class="achievement-item">
+            <div class="achievement-emoji">🏆</div>
+            <div class="achievement-info"><div class="achievement-name">Conversation Master</div><div class="achievement-desc">Complete 50 conversations</div></div>
+            <div class="achievement-date">Today</div>
+          </div>
+          <div class="achievement-item">
+            <div class="achievement-emoji">🔥</div>
+            <div class="achievement-info"><div class="achievement-name">Hot Streak</div><div class="achievement-desc">14 day streak!</div></div>
+            <div class="achievement-date">Today</div>
+          </div>
+          <div class="achievement-item">
+            <div class="achievement-emoji">⭐</div>
+            <div class="achievement-info"><div class="achievement-name">XP Hunter</div><div class="achievement-desc">Earn 2,000 XP</div></div>
+            <div class="achievement-date">3 days ago</div>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Quick Links</div>
+          <div class="quick-link"><div class="quick-link-icon">📊</div><div class="quick-link-label">Progress Analytics</div><div class="quick-link-arrow">›</div></div>
+          <div class="quick-link"><div class="quick-link-icon">📝</div><div class="quick-link-label">Conversation History</div><div class="quick-link-arrow">›</div></div>
+          <div class="quick-link"><div class="quick-link-icon">🏆</div><div class="quick-link-label">All Achievements</div><div class="quick-link-arrow">›</div></div>
+          <div class="quick-link"><div class="quick-link-icon">❌</div><div class="quick-link-label">Mistake Log</div><div class="quick-link-arrow">›</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

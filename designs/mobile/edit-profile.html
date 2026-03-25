@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .edit-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); position: relative; overflow: hidden; }
+    .edit-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    .top-bar { padding: var(--space-5); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-foreground); cursor: pointer; }
+    .top-bar-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .save-btn { margin-left: auto; padding: 6px 16px; background: var(--color-primary-gradient); color: white; font-family: var(--font-family); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); border: none; border-radius: var(--radius-md); cursor: pointer; box-shadow: 0 2px 12px var(--color-primary-glow); }
+
+    .content { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-6); position: relative; z-index: 1; }
+
+    /* Avatar Section */
+    .avatar-section { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+    .avatar { width: 88px; height: 88px; border-radius: var(--radius-full); background: var(--color-primary-soft); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: var(--font-weight-bold); color: var(--color-primary-light); border: 2px solid var(--color-primary); position: relative; }
+    .avatar-edit { position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid var(--color-background); }
+    .avatar-hint { font-size: var(--font-size-sm); color: var(--color-primary-light); cursor: pointer; }
+
+    /* Form */
+    .form-group { display: flex; flex-direction: column; gap: var(--space-2); }
+    .form-label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-foreground-secondary); }
+    .form-input { padding: var(--space-3) var(--space-4); font-family: var(--font-family); font-size: var(--font-size-base); border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); color: var(--color-foreground); }
+    .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+    .form-hint { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+
+    /* Select */
+    .form-select { padding: var(--space-3) var(--space-4); font-family: var(--font-family); font-size: var(--font-size-base); border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); color: var(--color-foreground); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M2 4l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+    /* Danger Zone */
+    .danger-section { padding: var(--space-4); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: var(--space-3); }
+    .danger-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-destructive); }
+    .danger-desc { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+    .danger-btn { padding: var(--space-3); background: transparent; border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-md); font-family: var(--font-family); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-destructive); cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="edit-mobile">
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Edit Profile</div>
+      <button class="save-btn">Save</button>
+    </div>
+
+    <div class="content">
+      <div class="avatar-section">
+        <div class="avatar">AN<div class="avatar-edit">📷</div></div>
+        <div class="avatar-hint">Change Photo</div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Display Name</div>
+        <input type="text" class="form-input" value="Alex Nguyen">
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Email</div>
+        <input type="email" class="form-input" value="alex.nguyen@email.com" style="color: var(--color-muted-foreground);">
+        <div class="form-hint">Email cannot be changed</div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">JLPT Level</div>
+        <select class="form-select">
+          <option>N5 - Beginner</option>
+          <option>N4 - Elementary</option>
+          <option selected>N3 - Intermediate</option>
+          <option>N2 - Upper Intermediate</option>
+          <option>N1 - Advanced</option>
+        </select>
+        <div class="form-hint">AI will adjust conversation complexity based on your level</div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Daily Goal (minutes)</div>
+        <select class="form-select">
+          <option>5 minutes</option>
+          <option>10 minutes</option>
+          <option selected>15 minutes</option>
+          <option>30 minutes</option>
+          <option>60 minutes</option>
+        </select>
+      </div>
+
+      <div class="danger-section">
+        <div class="danger-title">Danger Zone</div>
+        <div class="danger-desc">Once you delete your account, there is no going back. All data will be permanently removed.</div>
+        <button class="danger-btn">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

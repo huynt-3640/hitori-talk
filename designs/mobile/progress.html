@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress Analytics - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .progress-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); padding-bottom: var(--bottom-nav-height); position: relative; overflow: hidden; }
+    .progress-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%); pointer-events: none; }
+
+    .top-bar { padding: var(--space-5); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-foreground); cursor: pointer; }
+    .top-bar-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+
+    .content { padding: 0 var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); position: relative; z-index: 1; overflow-y: auto; }
+
+    /* Period Tabs */
+    .period-tabs { display: flex; gap: var(--space-2); }
+    .period-tab { padding: var(--space-2) var(--space-4); font-family: var(--font-family); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); color: var(--color-muted-foreground); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-full); cursor: pointer; }
+    .period-tab.active { background: var(--color-primary-soft); color: var(--color-primary-light); border-color: var(--color-primary); }
+
+    /* Summary Stats */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bento-gap); }
+    .summary-card { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); }
+    .summary-value { font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-foreground); }
+    .summary-label { font-size: var(--font-size-xs); color: var(--color-muted-foreground); margin-top: 4px; }
+    .summary-change { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); margin-top: 4px; }
+    .change-up { color: var(--color-success); }
+    .change-down { color: var(--color-destructive); }
+
+    /* Chart Placeholder */
+    .chart-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); }
+    .chart-title { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-4); }
+    .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-top: var(--space-2); }
+    .chart-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .chart-bar { width: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--color-primary-soft); transition: height 0.3s; }
+    .chart-bar.active { background: var(--color-primary-gradient); box-shadow: 0 0 8px var(--color-primary-glow); }
+    .chart-label { font-size: 10px; color: var(--color-muted-foreground); }
+
+    /* Week Heatmap */
+    .heatmap-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); }
+    .heatmap-title { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-4); }
+    .heatmap-row { display: flex; gap: 6px; }
+    .heatmap-cell { flex: 1; aspect-ratio: 1; border-radius: var(--radius-sm); }
+    .heat-0 { background: rgba(255,255,255,0.04); }
+    .heat-1 { background: rgba(124,58,237,0.15); }
+    .heat-2 { background: rgba(124,58,237,0.3); }
+    .heat-3 { background: rgba(124,58,237,0.5); }
+    .heat-4 { background: rgba(124,58,237,0.75); }
+    .heatmap-labels { display: flex; gap: 6px; margin-top: 6px; }
+    .heatmap-labels span { flex: 1; text-align: center; font-size: 10px; color: var(--color-muted-foreground); }
+
+    /* Accuracy Breakdown */
+    .breakdown-card { padding: var(--space-5); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); }
+    .breakdown-title { font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-foreground); margin-bottom: var(--space-4); }
+    .breakdown-item { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+    .breakdown-label { width: 80px; font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+    .breakdown-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; }
+    .breakdown-fill { height: 100%; border-radius: var(--radius-full); }
+    .fill-grammar { background: var(--color-primary-gradient); }
+    .fill-vocab { background: linear-gradient(135deg, #10b981, #34d399); }
+    .fill-polite { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .breakdown-pct { width: 36px; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-foreground); text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="progress-mobile">
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Progress Analytics</div>
+    </div>
+
+    <div class="content">
+      <div class="period-tabs">
+        <button class="period-tab active">This Week</button>
+        <button class="period-tab">This Month</button>
+        <button class="period-tab">All Time</button>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-value" style="color:var(--color-xp)">+320</div>
+          <div class="summary-label">XP Earned</div>
+          <div class="summary-change change-up">↑ 15% vs last week</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">8</div>
+          <div class="summary-label">Conversations</div>
+          <div class="summary-change change-up">↑ 3 more</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value" style="color:var(--color-success)">87%</div>
+          <div class="summary-label">Accuracy</div>
+          <div class="summary-change change-up">↑ 5%</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">42m</div>
+          <div class="summary-label">Practice Time</div>
+          <div class="summary-change change-down">↓ 8 min</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Daily XP</div>
+        <div class="chart-bars">
+          <div class="chart-bar-col"><div class="chart-bar" style="height:40%"></div><div class="chart-label">Mon</div></div>
+          <div class="chart-bar-col"><div class="chart-bar" style="height:65%"></div><div class="chart-label">Tue</div></div>
+          <div class="chart-bar-col"><div class="chart-bar" style="height:30%"></div><div class="chart-label">Wed</div></div>
+          <div class="chart-bar-col"><div class="chart-bar" style="height:80%"></div><div class="chart-label">Thu</div></div>
+          <div class="chart-bar-col"><div class="chart-bar" style="height:55%"></div><div class="chart-label">Fri</div></div>
+          <div class="chart-bar-col"><div class="chart-bar active" style="height:90%"></div><div class="chart-label">Sat</div></div>
+          <div class="chart-bar-col"><div class="chart-bar" style="height:20%"></div><div class="chart-label">Sun</div></div>
+        </div>
+      </div>
+
+      <div class="heatmap-card">
+        <div class="heatmap-title">Activity (Last 4 Weeks)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="heatmap-row"><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-0"></div></div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-1"></div></div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-0"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-1"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div></div>
+          <div class="heatmap-row"><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-2"></div><div class="heatmap-cell heat-3"></div><div class="heatmap-cell heat-4"></div><div class="heatmap-cell heat-0"></div></div>
+        </div>
+        <div class="heatmap-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      </div>
+
+      <div class="breakdown-card">
+        <div class="breakdown-title">Accuracy Breakdown</div>
+        <div class="breakdown-item"><div class="breakdown-label">Grammar</div><div class="breakdown-bar"><div class="breakdown-fill fill-grammar" style="width:82%"></div></div><div class="breakdown-pct">82%</div></div>
+        <div class="breakdown-item"><div class="breakdown-label">Vocabulary</div><div class="breakdown-bar"><div class="breakdown-fill fill-vocab" style="width:91%"></div></div><div class="breakdown-pct">91%</div></div>
+        <div class="breakdown-item"><div class="breakdown-label">Politeness</div><div class="breakdown-bar"><div class="breakdown-fill fill-polite" style="width:88%"></div></div><div class="breakdown-pct">88%</div></div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+</body>
+</html>

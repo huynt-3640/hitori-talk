@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mistake Log - Mobile</title>
+  <link rel="stylesheet" href="../css/lunaris-variables.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .mistakes-mobile { width: 390px; min-height: 844px; display: flex; flex-direction: column; background: var(--color-background-gradient); padding-bottom: var(--bottom-nav-height); position: relative; overflow: hidden; }
+    .mistakes-mobile::before { content: ''; position: absolute; top: -80px; right: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    .top-bar { padding: var(--space-5); display: flex; align-items: center; gap: var(--space-3); position: relative; z-index: 1; }
+    .back-btn { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-foreground); cursor: pointer; }
+    .top-bar-title { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); color: var(--color-foreground); }
+    .top-bar-count { margin-left: auto; font-size: var(--font-size-sm); color: var(--color-muted-foreground); }
+
+    .content { padding: 0 var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); position: relative; z-index: 1; }
+
+    /* Filter */
+    .filter-row { display: flex; gap: var(--space-2); overflow-x: auto; }
+    .filter-chip { padding: var(--space-2) var(--space-3); font-family: var(--font-family); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); color: var(--color-muted-foreground); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-full); cursor: pointer; white-space: nowrap; }
+    .filter-chip.active { background: var(--color-primary-soft); color: var(--color-primary-light); border-color: var(--color-primary); }
+
+    /* Mistake Card */
+    .mistake-card { padding: var(--space-4); background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: var(--space-3); }
+    .mistake-header { display: flex; align-items: center; gap: var(--space-2); }
+    .mistake-type { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); padding: 2px 8px; border-radius: var(--radius-full); }
+    .type-grammar { background: rgba(124,58,237,0.15); color: var(--color-primary-light); }
+    .type-vocab { background: rgba(16,185,129,0.15); color: #34d399; }
+    .type-polite { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .mistake-topic { font-size: var(--font-size-xs); color: var(--color-muted-foreground); margin-left: auto; }
+
+    .mistake-correction { padding: var(--space-3); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.1); border-radius: var(--radius-md); }
+    .mistake-original { font-size: var(--font-size-base); color: var(--color-muted-foreground); text-decoration: line-through; }
+    .mistake-arrow { font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin: 4px 0; }
+    .mistake-fixed { font-size: var(--font-size-base); color: var(--color-success); font-weight: var(--font-weight-medium); }
+
+    .mistake-explain { font-size: var(--font-size-sm); color: var(--color-foreground-secondary); line-height: 1.5; }
+    .mistake-date { font-size: var(--font-size-xs); color: var(--color-muted-foreground); }
+  </style>
+</head>
+<body>
+  <div class="mistakes-mobile">
+    <div class="top-bar">
+      <div class="back-btn">←</div>
+      <div class="top-bar-title">Mistake Log</div>
+      <div class="top-bar-count">23 total</div>
+    </div>
+
+    <div class="content">
+      <div class="filter-row">
+        <button class="filter-chip active">All</button>
+        <button class="filter-chip">Grammar</button>
+        <button class="filter-chip">Vocabulary</button>
+        <button class="filter-chip">Politeness</button>
+      </div>
+
+      <div class="mistake-card">
+        <div class="mistake-header">
+          <div class="mistake-type type-grammar">Grammar</div>
+          <div class="mistake-topic">Daily Standup</div>
+        </div>
+        <div class="mistake-correction">
+          <div class="mistake-original">デザインはもう確認しました</div>
+          <div class="mistake-arrow">↓</div>
+          <div class="mistake-fixed">デザインはもう確認済みです</div>
+        </div>
+        <div class="mistake-explain">Use 確認済み (kakunin-zumi) for "already confirmed" in business context — sounds more professional.</div>
+        <div class="mistake-date">Today, 10:32 AM</div>
+      </div>
+
+      <div class="mistake-card">
+        <div class="mistake-header">
+          <div class="mistake-type type-vocab">Vocabulary</div>
+          <div class="mistake-topic">Code Review</div>
+        </div>
+        <div class="mistake-correction">
+          <div class="mistake-original">コードを直しました</div>
+          <div class="mistake-arrow">↓</div>
+          <div class="mistake-fixed">コードを修正しました</div>
+        </div>
+        <div class="mistake-explain">修正 (shuusei) is more appropriate for technical contexts. 直す is more casual/general.</div>
+        <div class="mistake-date">Today, 9:18 AM</div>
+      </div>
+
+      <div class="mistake-card">
+        <div class="mistake-header">
+          <div class="mistake-type type-polite">Politeness</div>
+          <div class="mistake-topic">Client Meeting</div>
+        </div>
+        <div class="mistake-correction">
+          <div class="mistake-original">見せてください</div>
+          <div class="mistake-arrow">↓</div>
+          <div class="mistake-fixed">ご覧いただけますか</div>
+        </div>
+        <div class="mistake-explain">Use honorific language (敬語) when speaking with clients. ご覧いただく is the keigo form of 見せる.</div>
+        <div class="mistake-date">Yesterday, 2:15 PM</div>
+      </div>
+
+      <div class="mistake-card">
+        <div class="mistake-header">
+          <div class="mistake-type type-grammar">Grammar</div>
+          <div class="mistake-topic">Bug Report</div>
+        </div>
+        <div class="mistake-correction">
+          <div class="mistake-original">バグを見つけたので報告します</div>
+          <div class="mistake-arrow">↓</div>
+          <div class="mistake-fixed">バグが見つかりましたのでご報告いたします</div>
+        </div>
+        <div class="mistake-explain">Use passive form 見つかる (was found) instead of active 見つけた (I found) for formal bug reports. Add ご...いたします for keigo.</div>
+        <div class="mistake-date">Mar 22, 2:50 PM</div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="#" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">📚</div><div class="nav-label">Topics</div></a>
+      <a href="#" class="nav-item"><div class="nav-icon">🎤</div><div class="nav-label">Practice</div></a>
+      <a href="#" class="nav-item active"><div class="nav-icon">⚙️</div><div class="nav-label">Settings</div></a>
+    </div>
+  </div>
+</body>
+</html>
