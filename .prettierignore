@@ -1,0 +1,5 @@
+node_modules
+.next
+designs
+docs
+pnpm-lock.yaml
