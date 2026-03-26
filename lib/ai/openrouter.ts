@@ -1,30 +1,11 @@
 import { OPENROUTER_CONFIG } from '@/config/constants';
+import type { ChatMessage, ChatResponse } from './types';
 
-interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
-
-interface OpenRouterResponse {
-  id: string;
-  choices: {
-    message: {
-      role: string;
-      content: string;
-    };
-  }[];
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
-
-export async function chatCompletion(
+async function callOpenRouter(
   messages: ChatMessage[],
-  model: string = OPENROUTER_CONFIG.DEFAULT_MODEL
-): Promise<OpenRouterResponse> {
-  const response = await fetch(OPENROUTER_CONFIG.BASE_URL, {
+  model: string
+): Promise<Response> {
+  return fetch(OPENROUTER_CONFIG.BASE_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -38,10 +19,36 @@ export async function chatCompletion(
       temperature: OPENROUTER_CONFIG.TEMPERATURE,
     }),
   });
+}
 
-  if (!response.ok) {
-    throw new Error(`OpenRouter API error: ${response.status}`);
+export async function openRouterChatCompletion(
+  messages: ChatMessage[],
+  model: string = OPENROUTER_CONFIG.DEFAULT_MODEL
+): Promise<ChatResponse> {
+  let response = await callOpenRouter(messages, model);
+
+  // Fallback to secondary model on payment/rate limit errors
+  if (!response.ok && model !== OPENROUTER_CONFIG.FALLBACK_MODEL) {
+    console.warn(
+      `OpenRouter primary model (${model}) failed with ${response.status}, trying fallback (${OPENROUTER_CONFIG.FALLBACK_MODEL})`
+    );
+    response = await callOpenRouter(messages, OPENROUTER_CONFIG.FALLBACK_MODEL);
   }
 
-  return response.json() as Promise<OpenRouterResponse>;
+  if (!response.ok) {
+    const errorBody = await response.text().catch(() => 'Unknown error');
+    throw new Error(`OpenRouter API error: ${response.status} - ${errorBody}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content ?? '';
+
+  return {
+    content,
+    usage: {
+      prompt_tokens: data.usage?.prompt_tokens ?? 0,
+      completion_tokens: data.usage?.completion_tokens ?? 0,
+      total_tokens: data.usage?.total_tokens ?? 0,
+    },
+  };
 }

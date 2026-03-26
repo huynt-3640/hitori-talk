@@ -35,6 +35,9 @@ next-env.d.ts
 *.pyc
 __pycache__/
 
+# Claude / MCP
+.mcp.json
+
 # IDE
 .vscode/
 .idea/

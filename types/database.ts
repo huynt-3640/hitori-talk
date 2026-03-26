@@ -1,212 +1,487 @@
-export interface Database {
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          id: string;
-          email: string;
-          display_name: string | null;
-          jlpt_level: 'N5' | 'N4' | 'N3' | 'N2' | 'N1' | null;
-          user_level: number;
-          xp: number;
-          streak_count: number;
-          last_practice_date: string | null;
-          placement_test_completed: boolean;
-          placement_test_result: Record<string, unknown> | null;
-          preferences: Record<string, unknown>;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id: string;
-          email: string;
-          display_name?: string | null;
-          jlpt_level?: 'N5' | 'N4' | 'N3' | 'N2' | 'N1' | null;
-          user_level?: number;
-          xp?: number;
-          streak_count?: number;
-          last_practice_date?: string | null;
-          placement_test_completed?: boolean;
-          placement_test_result?: Record<string, unknown> | null;
-          preferences?: Record<string, unknown>;
-        };
-        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
-      };
-      topics: {
-        Row: {
-          id: string;
-          title: string;
-          description: string | null;
-          category: string;
-          is_custom: boolean;
-          created_by_user_id: string | null;
-          context_generation_prompt: string | null;
-          is_active: boolean;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          title: string;
-          description?: string | null;
-          category: string;
-          is_custom?: boolean;
-          created_by_user_id?: string | null;
-          context_generation_prompt?: string | null;
-          is_active?: boolean;
-        };
-        Update: Partial<Database['public']['Tables']['topics']['Insert']>;
-      };
-      conversations: {
-        Row: {
-          id: string;
-          user_id: string;
-          topic_id: string | null;
-          context_scenario: string | null;
-          context_details: Record<string, unknown> | null;
-          duration_seconds: number | null;
-          message_count: number;
-          xp_earned: number;
-          mistakes_count: number;
-          status: 'active' | 'completed' | 'abandoned';
-          metadata: Record<string, unknown>;
-          created_at: string;
-          completed_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          topic_id?: string | null;
-          context_scenario?: string | null;
-          context_details?: Record<string, unknown> | null;
-          duration_seconds?: number | null;
-          message_count?: number;
-          xp_earned?: number;
-          mistakes_count?: number;
-          status?: 'active' | 'completed' | 'abandoned';
-          metadata?: Record<string, unknown>;
-          completed_at?: string | null;
-        };
-        Update: Partial<Database['public']['Tables']['conversations']['Insert']>;
-      };
-      messages: {
-        Row: {
-          id: string;
-          conversation_id: string;
-          role: 'user' | 'assistant';
-          content_text: string;
-          content_audio_url: string | null;
-          corrections: Correction[] | null;
-          translation: string | null;
-          metadata: Record<string, unknown>;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          conversation_id: string;
-          role: 'user' | 'assistant';
-          content_text: string;
-          content_audio_url?: string | null;
-          corrections?: Correction[] | null;
-          translation?: string | null;
-          metadata?: Record<string, unknown>;
-        };
-        Update: Partial<Database['public']['Tables']['messages']['Insert']>;
-      };
       achievements: {
         Row: {
-          id: string;
-          code: string;
-          title: string;
-          description: string | null;
-          icon: string | null;
-          xp_reward: number;
-          requirement: Record<string, unknown>;
-          created_at: string;
-        };
+          category: string
+          condition_type: string
+          condition_value: number
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          name: string
+          name_ja: string
+          xp_reward: number
+        }
         Insert: {
-          id?: string;
-          code: string;
-          title: string;
-          description?: string | null;
-          icon?: string | null;
-          xp_reward?: number;
-          requirement: Record<string, unknown>;
-        };
-        Update: Partial<Database['public']['Tables']['achievements']['Insert']>;
-      };
-      user_achievements: {
+          category?: string
+          condition_type: string
+          condition_value: number
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          name: string
+          name_ja: string
+          xp_reward?: number
+        }
+        Update: {
+          category?: string
+          condition_type?: string
+          condition_value?: number
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          name_ja?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      conversations: {
         Row: {
-          user_id: string;
-          achievement_id: string;
-          unlocked_at: string;
-        };
+          ai_role: string
+          context_details: Json
+          created_at: string
+          ended_at: string | null
+          id: string
+          message_count: number
+          started_at: string
+          status: string
+          title: string
+          topic_id: string | null
+          user_id: string
+          xp_earned: number
+        }
         Insert: {
-          user_id: string;
-          achievement_id: string;
-        };
-        Update: never;
-      };
-      mistake_log: {
-        Row: {
-          id: string;
-          user_id: string;
-          conversation_id: string;
-          message_id: string;
-          mistake_type: string | null;
-          original_text: string | null;
-          corrected_text: string | null;
-          explanation: string | null;
-          grammar_point: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          conversation_id: string;
-          message_id: string;
-          mistake_type?: string | null;
-          original_text?: string | null;
-          corrected_text?: string | null;
-          explanation?: string | null;
-          grammar_point?: string | null;
-        };
-        Update: Partial<Database['public']['Tables']['mistake_log']['Insert']>;
-      };
+          ai_role?: string
+          context_details?: Json
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          message_count?: number
+          started_at?: string
+          status?: string
+          title?: string
+          topic_id?: string | null
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          ai_role?: string
+          context_details?: Json
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          message_count?: number
+          started_at?: string
+          status?: string
+          title?: string
+          topic_id?: string | null
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_stats: {
         Row: {
-          id: string;
-          user_id: string;
-          date: string;
-          conversations_count: number;
-          messages_sent: number;
-          xp_earned: number;
-          mistakes_made: number;
-          study_time_seconds: number;
-          created_at: string;
-        };
+          conversations_count: number
+          corrections_applied: number
+          created_at: string
+          date: string
+          id: string
+          messages_count: number
+          mistakes_count: number
+          practice_minutes: number
+          user_id: string
+          xp_earned: number
+        }
         Insert: {
-          id?: string;
-          user_id: string;
-          date: string;
-          conversations_count?: number;
-          messages_sent?: number;
-          xp_earned?: number;
-          mistakes_made?: number;
-          study_time_seconds?: number;
-        };
-        Update: Partial<Database['public']['Tables']['daily_stats']['Insert']>;
-      };
-    };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-  };
+          conversations_count?: number
+          corrections_applied?: number
+          created_at?: string
+          date?: string
+          id?: string
+          messages_count?: number
+          mistakes_count?: number
+          practice_minutes?: number
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          conversations_count?: number
+          corrections_applied?: number
+          created_at?: string
+          date?: string
+          id?: string
+          messages_count?: number
+          mistakes_count?: number
+          practice_minutes?: number
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          audio_url: string | null
+          content: string
+          conversation_id: string
+          corrections: Json | null
+          created_at: string
+          id: string
+          role: string
+          token_count: number | null
+          translation: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          content: string
+          conversation_id: string
+          corrections?: Json | null
+          created_at?: string
+          id?: string
+          role: string
+          token_count?: number | null
+          translation?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          content?: string
+          conversation_id?: string
+          corrections?: Json | null
+          created_at?: string
+          id?: string
+          role?: string
+          token_count?: number | null
+          translation?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mistake_log: {
+        Row: {
+          conversation_id: string | null
+          corrected_text: string
+          created_at: string
+          explanation: string | null
+          id: string
+          is_reviewed: boolean
+          message_id: string | null
+          mistake_type: string
+          original_text: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          corrected_text: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          is_reviewed?: boolean
+          message_id?: string | null
+          mistake_type: string
+          original_text: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          corrected_text?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          is_reviewed?: boolean
+          message_id?: string | null
+          mistake_type?: string
+          original_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mistake_log_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mistake_log_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mistake_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          current_streak: number
+          daily_goal: number
+          display_name: string
+          id: string
+          jlpt_level: string
+          level: number
+          longest_streak: number
+          total_conversations: number
+          total_messages: number
+          total_xp: number
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          current_streak?: number
+          daily_goal?: number
+          display_name?: string
+          id: string
+          jlpt_level?: string
+          level?: number
+          longest_streak?: number
+          total_conversations?: number
+          total_messages?: number
+          total_xp?: number
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          current_streak?: number
+          daily_goal?: number
+          display_name?: string
+          id?: string
+          jlpt_level?: string
+          level?: number
+          longest_streak?: number
+          total_conversations?: number
+          total_messages?: number
+          total_xp?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      topics: {
+        Row: {
+          category: string
+          context_generation_prompt: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          is_active: boolean
+          sort_order: number
+          title: string
+          title_ja: string
+        }
+        Insert: {
+          category: string
+          context_generation_prompt: string
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          title_ja: string
+        }
+        Update: {
+          category?: string
+          context_generation_prompt?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          title_ja?: string
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          created_at: string
+          earned_at: string | null
+          id: string
+          progress: number
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          created_at?: string
+          earned_at?: string | null
+          id?: string
+          progress?: number
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          created_at?: string
+          earned_at?: string | null
+          id?: string
+          progress?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
 
-// Re-export Correction type used in messages table
-export interface Correction {
-  type: string;
-  original: string;
-  corrected: string;
-  explanation: string;
+type DefaultSchema = Database[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof Database
 }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof Database
+}
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof Database
+}
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never

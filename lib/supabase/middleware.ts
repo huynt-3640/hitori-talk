@@ -23,7 +23,25 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isProtectedPage = pathname.startsWith('/dashboard') || pathname.startsWith('/conversation');
+
+  // Redirect unauthenticated users to login
+  if (!user && isProtectedPage) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
+  // Redirect authenticated users away from auth pages
+  if (user && isAuthPage) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse;
 }

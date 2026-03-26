@@ -1,24 +1,27 @@
-export default function DashboardLayout({
+import { Navigation } from '@/components/shared/navigation';
+import { AmbientGlow } from '@/components/shared/ambient-glow';
+import { createClient } from '@/lib/supabase/server';
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('display_name, jlpt_level, level')
+    .single();
+
   return (
-    <div className="flex min-h-screen">
-      {/* Desktop sidebar - hidden on mobile */}
-      <aside className="hidden w-[var(--sidebar-width)] shrink-0 md:block">
-        {/* Sidebar will be implemented here */}
-      </aside>
+    <div className="relative flex min-h-screen">
+      <AmbientGlow variant="dashboard" />
+      <Navigation profile={profile} />
 
       {/* Main content */}
-      <main className="flex-1 pb-[var(--bottom-nav-height)] md:pb-0">
+      <main className="relative z-10 flex-1 pb-[var(--bottom-nav-height)] md:pb-0">
         {children}
       </main>
-
-      {/* Mobile bottom nav - hidden on desktop */}
-      <nav className="fixed inset-x-0 bottom-0 h-[var(--bottom-nav-height)] md:hidden">
-        {/* Bottom nav will be implemented here */}
-      </nav>
     </div>
   );
 }
