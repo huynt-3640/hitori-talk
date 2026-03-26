@@ -28,8 +28,8 @@ export const MODEL_CONFIG = {
 } as const;
 
 export const GEMINI_CONFIG = {
-  BASE_URL: 'https://generativelanguage.googleapis.com/v1beta/models',
-  DEFAULT_MODEL: 'gemini-3.1-flash-lite-preview',
+  BASE_URL: 'https://aiplatform.googleapis.com/v1/publishers/google/models',
+  DEFAULT_MODEL: 'gemini-3-flash-preview',
   MAX_TOKENS: 1024,
   TEMPERATURE: 0.7,
 } as const;
@@ -49,5 +49,6 @@ export const GOOGLE_TTS_CONFIG = {
 } as const;
 
 export const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'] as const;
+export const ONBOARDING_TEST_MESSAGES = 5;
 
 export const TOPIC_CATEGORIES = ['Work', 'Technical', 'Business', 'Casual'] as const;

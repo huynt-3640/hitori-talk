@@ -271,6 +271,7 @@ export type Database = {
           jlpt_level: string
           level: number
           longest_streak: number
+          onboarding_completed: boolean
           total_conversations: number
           total_messages: number
           total_xp: number
@@ -286,6 +287,7 @@ export type Database = {
           jlpt_level?: string
           level?: number
           longest_streak?: number
+          onboarding_completed?: boolean
           total_conversations?: number
           total_messages?: number
           total_xp?: number
@@ -301,6 +303,7 @@ export type Database = {
           jlpt_level?: string
           level?: number
           longest_streak?: number
+          onboarding_completed?: boolean
           total_conversations?: number
           total_messages?: number
           total_xp?: number

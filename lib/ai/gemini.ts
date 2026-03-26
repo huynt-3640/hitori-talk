@@ -23,11 +23,6 @@ export async function geminiChatCompletion(
   messages: ChatMessage[],
   model: string = GEMINI_CONFIG.DEFAULT_MODEL
 ): Promise<ChatResponse> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not set');
-  }
-
   // Separate system instruction from conversation messages
   const systemMessages = messages.filter((m) => m.role === 'system');
   const conversationMessages = messages.filter((m) => m.role !== 'system');
@@ -53,10 +48,18 @@ export async function geminiChatCompletion(
     };
   }
 
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY is not set');
+  }
+
   const url = `${GEMINI_CONFIG.BASE_URL}/${model}:generateContent?key=${apiKey}`;
+
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   });
 
