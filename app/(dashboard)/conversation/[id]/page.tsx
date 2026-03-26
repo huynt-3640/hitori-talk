@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { MessageBubble } from '@/components/conversation/message-bubble';
 import { MessageInput } from '@/components/conversation/message-input';
-import { useSpeechRecognition } from '@/lib/hooks/use-speech-recognition';
+import { useAudioRecorder } from '@/lib/hooks/use-audio-recorder';
 import { useSpeechSynthesis } from '@/lib/hooks/use-speech-synthesis';
 
 interface Message {
@@ -44,14 +44,26 @@ export default function ConversationPage() {
   // TTS
   const { speak, stop: stopSpeaking } = useSpeechSynthesis({ lang: 'ja-JP', rate: 0.9 });
 
-  // STT - fill input instead of auto-send
+  // STT - record audio → send to Google Cloud STT → fill input
   const [sttText, setSttText] = useState('');
-  const { isListening, isSupported: sttSupported, toggleListening } = useSpeechRecognition({
-    lang: 'ja-JP',
-    continuous: true,
-    onResult: (transcript, isFinal) => {
-      if (isFinal && transcript.trim()) {
-        setSttText((prev) => (prev ? prev + transcript.trim() : transcript.trim()));
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const { isRecording, audioLevel, toggleRecording } = useAudioRecorder({
+    onStop: async (base64Audio) => {
+      setIsTranscribing(true);
+      try {
+        const res = await fetch('/api/speech-to-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ audio: base64Audio }),
+        });
+        const data = await res.json();
+        if (data.text?.trim()) {
+          setSttText(data.text.trim());
+        }
+      } catch (err) {
+        console.error('STT error:', err);
+      } finally {
+        setIsTranscribing(false);
       }
     },
   });
@@ -234,8 +246,10 @@ export default function ConversationPage() {
           <MessageInput
             onSend={handleSend}
             disabled={sending}
-            onMicPress={sttSupported ? toggleListening : undefined}
-            isListening={isListening}
+            onMicPress={toggleRecording}
+            isRecording={isRecording}
+            isTranscribing={isTranscribing}
+            audioLevel={audioLevel}
             externalValue={sttText}
             onExternalValueConsumed={() => setSttText('')}
           />

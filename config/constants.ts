@@ -48,6 +48,13 @@ export const GOOGLE_TTS_CONFIG = {
   },
 } as const;
 
+export const GOOGLE_STT_CONFIG = {
+  BASE_URL: 'https://speech.googleapis.com/v1/speech:recognize',
+  LANGUAGE_CODE: 'ja-JP',
+  ENCODING: 'WEBM_OPUS',
+  SAMPLE_RATE: 48000,
+} as const;
+
 export const JLPT_LEVELS = ['N5', 'N4', 'N3', 'N2', 'N1'] as const;
 export const ONBOARDING_TEST_MESSAGES = 5;
 
