@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Home', icon: '🏠' },
@@ -22,6 +24,15 @@ interface NavigationProps {
 
 export function Navigation({ profile }: NavigationProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setLoggingOut(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+  }
 
   const initials = profile?.display_name
     ? profile.display_name.slice(0, 2).toUpperCase()
@@ -61,14 +72,14 @@ export function Navigation({ profile }: NavigationProps) {
           })}
         </nav>
 
-        {/* Profile Card */}
+        {/* Profile Card + Logout */}
         {profile && (
           <div className="p-3">
             <div className="glass-card flex items-center gap-3 rounded-xl p-3">
               <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-bold text-primary-light">
                 {initials}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-foreground">
                   {profile.display_name}
                 </p>
@@ -76,6 +87,18 @@ export function Navigation({ profile }: NavigationProps) {
                   JLPT {profile.jlpt_level} · Lv.{profile.level}
                 </p>
               </div>
+              <button
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="shrink-0 rounded-lg p-2 text-foreground-secondary transition-colors hover:bg-glass-hover hover:text-destructive"
+                title="Log out"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
             </div>
           </div>
         )}
