@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { chatCompletion } from '@/lib/ai/chat';
 import { buildSystemPrompt } from '@/lib/ai/prompts';
+import { parseJsonResponse } from '@/lib/ai/parse-json-response';
 import type { JLPTLevel } from '@/types';
 
 export async function GET(
@@ -111,21 +112,16 @@ export async function POST(
     const aiResponse = await chatCompletion(messages);
     const rawContent = aiResponse.content;
 
-    // Parse AI response - free models often wrap JSON in markdown code blocks
+    // Parse AI response - extract JSON even if mixed with plain text
     let response: string;
     let corrections: unknown[] | null = null;
     let translation: string | null = null;
 
     try {
-      // Strip markdown code block wrappers (```json ... ``` or ``` ... ```)
-      const jsonStr = rawContent
-        .replace(/^```(?:json)?\s*\n?/i, '')
-        .replace(/\n?```\s*$/i, '')
-        .trim();
-      const parsed = JSON.parse(jsonStr);
-      response = parsed.response || rawContent;
-      corrections = parsed.corrections || null;
-      translation = parsed.translation || null;
+      const parsed = parseJsonResponse(rawContent);
+      response = (parsed.response as string) || rawContent;
+      corrections = (parsed.corrections as unknown[]) || null;
+      translation = (parsed.translation as string) || null;
     } catch {
       // AI didn't return valid JSON, use raw content
       response = rawContent;

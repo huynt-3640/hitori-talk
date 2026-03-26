@@ -38,6 +38,7 @@ export async function geminiChatCompletion(
     generationConfig: {
       maxOutputTokens: GEMINI_CONFIG.MAX_TOKENS,
       temperature: GEMINI_CONFIG.TEMPERATURE,
+      responseMimeType: 'application/json',
     },
   };
 

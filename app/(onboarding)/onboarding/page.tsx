@@ -3,7 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { ONBOARDING_TEST_MESSAGES } from '@/config/constants';
+import { useAudioRecorder } from '@/lib/hooks/use-audio-recorder';
+import { useSpeechSynthesis } from '@/lib/hooks/use-speech-synthesis';
 
 const LEVELS = [
   { id: 'N5', name: 'Beginner', desc: 'Basic greetings, simple phrases' },
@@ -33,6 +36,32 @@ export default function OnboardingPage() {
   const [userMessageCount, setUserMessageCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // TTS
+  const { speak } = useSpeechSynthesis({ lang: 'ja-JP', rate: 0.9 });
+
+  // STT
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const { isRecording, audioLevel, toggleRecording } = useAudioRecorder({
+    onStop: async (base64Audio) => {
+      setIsTranscribing(true);
+      try {
+        const res = await fetch('/api/speech-to-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ audio: base64Audio }),
+        });
+        const data = await res.json();
+        if (data.text?.trim()) {
+          setInput((prev) => prev + data.text.trim());
+        }
+      } catch (err) {
+        console.error('STT error:', err);
+      } finally {
+        setIsTranscribing(false);
+      }
+    },
+  });
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -49,13 +78,17 @@ export default function OnboardingPage() {
         body: JSON.stringify({ action: 'greeting', jlpt_level: selectedLevel }),
       });
       const data = await res.json();
-      setMessages([{ role: 'assistant', content: data.response, translation: data.translation }]);
+      const msg: ChatMessage = { role: 'assistant', content: data.response, translation: data.translation };
+      setMessages([msg]);
+      speak(msg.content);
     } catch {
-      setMessages([{
+      const msg: ChatMessage = {
         role: 'assistant',
         content: 'こんにちは！お仕事について教えてください。',
         translation: 'Xin chào! Hãy kể cho tôi về công việc của bạn.',
-      }]);
+      };
+      setMessages([msg]);
+      speak(msg.content);
     } finally {
       setSending(false);
     }
@@ -72,7 +105,23 @@ export default function OnboardingPage() {
     const newCount = userMessageCount + 1;
     setUserMessageCount(newCount);
 
+    // If this is the last message, skip AI reply and go straight to evaluation
+    if (newCount >= ONBOARDING_TEST_MESSAGES) {
+      try {
+        await evaluateLevel(newMessages);
+      } catch {
+        setEvaluatedLevel(selectedLevel);
+        setReasoning('Không thể đánh giá tự động. Sử dụng level bạn đã chọn.');
+        setStep(3);
+      } finally {
+        setSending(false);
+      }
+      return;
+    }
+
     try {
+      // Send only previous messages as history, current message separately
+      const previousMessages = messages.map((m) => ({ role: m.role, content: m.content }));
       const res = await fetch('/api/onboarding/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,53 +129,52 @@ export default function OnboardingPage() {
           action: 'chat',
           jlpt_level: selectedLevel,
           message: content,
-          history: newMessages.map((m) => ({ role: m.role, content: m.content })),
+          history: previousMessages,
         }),
       });
       const data = await res.json();
 
-      setMessages([...newMessages, {
+      const aiMsg: ChatMessage = {
         role: 'assistant',
         content: data.response,
         translation: data.translation,
         corrections: data.corrections,
-      }]);
-
-      // Check if test is complete
-      if (newCount >= ONBOARDING_TEST_MESSAGES) {
-        await evaluateLevel([...newMessages, { role: 'assistant', content: data.response }]);
-      }
+      };
+      setMessages([...newMessages, aiMsg]);
+      speak(aiMsg.content);
     } catch {
-      setMessages([...newMessages, {
+      const aiMsg: ChatMessage = {
         role: 'assistant',
         content: 'すみません、もう一度お願いします。',
         translation: 'Xin lỗi, bạn nói lại được không?',
-      }]);
+      };
+      setMessages([...newMessages, aiMsg]);
+      speak(aiMsg.content);
     } finally {
       setSending(false);
     }
   }
 
   async function evaluateLevel(allMessages: ChatMessage[]) {
-    try {
-      const res = await fetch('/api/onboarding/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'evaluate',
-          jlpt_level: selectedLevel,
-          history: allMessages.map((m) => ({ role: m.role, content: m.content })),
-        }),
-      });
-      const data = await res.json();
-      setEvaluatedLevel(data.evaluated_level);
-      setReasoning(data.reasoning);
-      setStep(3);
-    } catch {
-      setEvaluatedLevel(selectedLevel);
-      setReasoning('Không thể đánh giá tự động. Sử dụng level bạn đã chọn.');
-      setStep(3);
+    const res = await fetch('/api/onboarding/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'evaluate',
+        jlpt_level: selectedLevel,
+        history: allMessages.map((m) => ({ role: m.role, content: m.content })),
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(`Evaluate failed: ${res.status}`);
     }
+    const data = await res.json();
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    setEvaluatedLevel(data.evaluated_level || selectedLevel);
+    setReasoning(data.reasoning || '');
+    setStep(3);
   }
 
   async function saveLevel(level: string) {
@@ -147,6 +195,9 @@ export default function OnboardingPage() {
   async function skipOnboarding() {
     await saveLevel('N5');
   }
+
+  const micDisabled = sending || isTranscribing || userMessageCount >= ONBOARDING_TEST_MESSAGES;
+  const ringScale = isRecording ? 1 + audioLevel * 0.8 : 0;
 
   return (
     <div className="relative z-10 w-full max-w-[720px] px-5 py-8 md:px-0">
@@ -269,8 +320,12 @@ export default function OnboardingPage() {
               ))}
               {sending && (
                 <div className="flex justify-start">
-                  <div className="rounded-2xl border border-glass-border bg-glass px-4 py-3 text-foreground-secondary">
-                    <span className="animate-pulse">...</span>
+                  <div className="rounded-2xl border border-glass-border bg-glass px-4 py-3">
+                    <div className="flex gap-1.5">
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-foreground-secondary [animation-delay:0ms]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-foreground-secondary [animation-delay:150ms]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-foreground-secondary [animation-delay:300ms]" />
+                    </div>
                   </div>
                 </div>
               )}
@@ -281,11 +336,12 @@ export default function OnboardingPage() {
           {/* Input */}
           <div className="border-t border-glass-border p-4">
             {userMessageCount >= ONBOARDING_TEST_MESSAGES ? (
-              <div className="text-center text-sm text-foreground-secondary">
+              <div className="flex items-center justify-center gap-2 text-sm text-foreground-secondary">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                 Evaluating your level...
               </div>
             ) : (
-              <div className="flex gap-3">
+              <div className="flex items-end gap-2">
                 <input
                   type="text"
                   value={input}
@@ -296,16 +352,54 @@ export default function OnboardingPage() {
                       sendMessage();
                     }
                   }}
-                  placeholder="Type in Japanese... (Alt+Enter to send)"
+                  placeholder="Type or speak in Japanese..."
                   disabled={sending}
                   className="flex-1 rounded-xl border border-glass-border bg-[rgba(255,255,255,0.04)] px-4 py-3 text-[15px] text-foreground placeholder:text-[rgba(241,241,247,0.5)] focus:border-primary focus:outline-none disabled:opacity-50"
                 />
+
+                {/* Mic button */}
+                <div className="relative flex shrink-0 items-center justify-center">
+                  {isRecording && (
+                    <div
+                      className="absolute inset-0 rounded-xl bg-destructive/30"
+                      style={{
+                        transform: `scale(${ringScale})`,
+                        transition: 'transform 100ms ease-out',
+                      }}
+                    />
+                  )}
+                  <button
+                    onClick={toggleRecording}
+                    disabled={micDisabled}
+                    className={cn(
+                      'relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl transition-all disabled:opacity-50',
+                      isTranscribing
+                        ? 'border border-glass-border bg-glass text-foreground-secondary'
+                        : isRecording
+                          ? 'bg-destructive text-white'
+                          : 'btn-primary-gradient'
+                    )}
+                  >
+                    {isTranscribing ? (
+                      <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    ) : isRecording ? (
+                      <span className="block h-4 w-4 rounded-sm bg-white" />
+                    ) : (
+                      '🎤'
+                    )}
+                  </button>
+                </div>
+
+                {/* Send button */}
                 <button
                   onClick={sendMessage}
                   disabled={!input.trim() || sending}
-                  className="btn-primary-gradient shrink-0 rounded-xl px-5 py-3 text-sm font-semibold disabled:opacity-40"
+                  className="glass-card flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg text-foreground transition-colors hover:bg-glass-hover disabled:opacity-30"
                 >
-                  Send
+                  ➤
                 </button>
               </div>
             )}

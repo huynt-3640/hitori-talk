@@ -6,16 +6,9 @@ import {
   buildOnboardingGreetingPrompt,
   buildEvaluationPrompt,
 } from '@/lib/ai/onboarding-prompts';
+import { parseJsonResponse } from '@/lib/ai/parse-json-response';
 import { ONBOARDING_TEST_MESSAGES } from '@/config/constants';
 import type { JLPTLevel } from '@/types';
-
-function parseJsonResponse(raw: string): Record<string, unknown> {
-  const jsonStr = raw
-    .replace(/^```(?:json)?\s*\n?/i, '')
-    .replace(/\n?```\s*$/i, '')
-    .trim();
-  return JSON.parse(jsonStr);
-}
 
 export async function POST(request: Request) {
   try {

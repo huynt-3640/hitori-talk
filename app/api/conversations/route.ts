@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { chatCompletion } from '@/lib/ai/chat';
 import { buildContextGenerationPrompt } from '@/lib/ai/prompts';
+import { parseJsonResponse } from '@/lib/ai/parse-json-response';
 import type { JLPTLevel } from '@/types';
 
 export async function POST(request: Request) {
@@ -44,18 +45,12 @@ export async function POST(request: Request) {
 
     let context: { ai_role: string; scenario: string; greeting: string; greeting_translation: string };
     try {
-      const rawContent = contextResponse.content;
-      // Strip markdown code block wrappers
-      const jsonStr = rawContent
-        .replace(/^```(?:json)?\s*\n?/i, '')
-        .replace(/\n?```\s*$/i, '')
-        .trim();
-      const parsed = JSON.parse(jsonStr);
+      const parsed = parseJsonResponse(contextResponse.content);
       context = {
-        ai_role: parsed.ai_role || 'Japanese colleague',
-        scenario: parsed.scenario || topic.description,
-        greeting: parsed.greeting || 'こんにちは！よろしくお願いします。',
-        greeting_translation: parsed.greeting_translation || '',
+        ai_role: (parsed.ai_role as string) || 'Japanese colleague',
+        scenario: (parsed.scenario as string) || topic.description,
+        greeting: (parsed.greeting as string) || 'こんにちは！よろしくお願いします。',
+        greeting_translation: (parsed.greeting_translation as string) || '',
       };
     } catch {
       // Fallback if AI doesn't return valid JSON
