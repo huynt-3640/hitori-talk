@@ -53,6 +53,36 @@ export function buildSystemPrompt(context: PromptContext): string {
   ].join('\n');
 }
 
+export function buildTopicPhrasesPrompt(
+  topicTitle: string,
+  description: string,
+  category: string
+): string {
+  return [
+    `Topic: ${topicTitle} (Category: ${category})`,
+    `Description: ${description}`,
+    '',
+    'The learner is an IT developer practicing Japanese conversation.',
+    '',
+    'Generate example phrases and tips for this topic.',
+    '',
+    'Respond with ONLY a valid JSON object (no text before or after, no markdown):',
+    '{',
+    '  "example_phrases": [',
+    '    { "ja": "Japanese phrase with kanji and furigana in parentheses where helpful", "vi": "Vietnamese translation" }',
+    '  ],',
+    '  "tips": ["Tip in Vietnamese"]',
+    '}',
+    '',
+    'Rules:',
+    '- Generate exactly 4-5 example_phrases relevant to this topic',
+    '- Generate exactly 3 tips',
+    '- Phrases should be natural, practical Japanese that an IT developer would actually use',
+    '- Tips should be practical conversation advice in Vietnamese',
+    '- Use intermediate-level Japanese (mix of polite and casual business Japanese)',
+  ].join('\n');
+}
+
 export function buildContextGenerationPrompt(
   topicContextPrompt: string,
   jlptLevel: JLPTLevel
@@ -70,9 +100,13 @@ export function buildContextGenerationPrompt(
     '  "ai_role": "Your specific character name and role as the LISTENER/PARTNER, written in Vietnamese (e.g., Tanaka-san, đồng nghiệp tham dự buổi thuyết trình)",',
     '  "scenario": "Brief scenario description written in Vietnamese - make clear that the LEARNER is the active party",',
     '  "greeting": "Your opening line in Japanese - as the listener/partner, invite the learner to speak about the scenario",',
-    '  "greeting_translation": "Vietnamese translation of the greeting"',
+    '  "greeting_translation": "Vietnamese translation of the greeting",',
+    '  "useful_expressions": [{ "ja": "Japanese expression", "vi": "Vietnamese translation" }]',
     '}',
     '',
-    'IMPORTANT: The "ai_role" and "scenario" fields MUST be written in Vietnamese. The "greeting" must be in Japanese. The "greeting_translation" must be the Vietnamese translation of the greeting.',
+    'IMPORTANT:',
+    '- The "ai_role" and "scenario" fields MUST be written in Vietnamese.',
+    '- The "greeting" must be in Japanese. The "greeting_translation" must be the Vietnamese translation.',
+    '- "useful_expressions": Generate 4-5 expressions specific to THIS scenario that the learner might need. These should be practical phrases an IT developer would use in this exact situation.',
   ].join('\n');
 }

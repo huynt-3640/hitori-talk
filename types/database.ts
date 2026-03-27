@@ -317,10 +317,12 @@ export type Database = {
           context_generation_prompt: string
           created_at: string
           description: string
+          example_phrases: { ja: string; vi: string }[]
           icon: string
           id: string
           is_active: boolean
           sort_order: number
+          tips: string[]
           title: string
           title_ja: string
         }
@@ -329,10 +331,12 @@ export type Database = {
           context_generation_prompt: string
           created_at?: string
           description: string
+          example_phrases?: { ja: string; vi: string }[]
           icon?: string
           id?: string
           is_active?: boolean
           sort_order?: number
+          tips?: string[]
           title: string
           title_ja: string
         }
@@ -341,10 +345,12 @@ export type Database = {
           context_generation_prompt?: string
           created_at?: string
           description?: string
+          example_phrases?: { ja: string; vi: string }[]
           icon?: string
           id?: string
           is_active?: boolean
           sort_order?: number
+          tips?: string[]
           title?: string
           title_ja?: string
         }

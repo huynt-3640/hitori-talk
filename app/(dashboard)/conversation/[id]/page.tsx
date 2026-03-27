@@ -190,7 +190,10 @@ export default function ConversationPage() {
     );
   }
 
-  const contextDetails = conversation?.context_details as { scenario?: string } | null;
+  const contextDetails = conversation?.context_details as {
+    scenario?: string;
+    useful_expressions?: { ja: string; vi: string }[];
+  } | null;
   const correctionCount = messages.filter(
     (m) => m.role === 'assistant' && m.corrections && Array.isArray(m.corrections) && m.corrections.length > 0
   ).length;
@@ -309,6 +312,21 @@ export default function ConversationPage() {
               )}
             </div>
           </div>
+
+          {/* Useful Expressions */}
+          {contextDetails?.useful_expressions && contextDetails.useful_expressions.length > 0 && (
+            <div>
+              <h3 className="mb-3 font-bold text-foreground">📝 Useful Expressions</h3>
+              <div className="glass-card flex flex-col gap-2 rounded-2xl p-4">
+                {contextDetails.useful_expressions.map((expr, i) => (
+                  <div key={i} className="border-b border-glass-border py-2 last:border-0 last:pb-0">
+                    <p className="text-sm font-semibold text-foreground">{expr.ja}</p>
+                    <p className="mt-0.5 text-xs text-foreground-secondary">{expr.vi}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Session Stats */}
           <div>

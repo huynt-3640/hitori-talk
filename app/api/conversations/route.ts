@@ -43,7 +43,13 @@ export async function POST(request: Request) {
       [{ role: 'user', content: contextPrompt }]
     );
 
-    let context: { ai_role: string; scenario: string; greeting: string; greeting_translation: string };
+    let context: {
+      ai_role: string;
+      scenario: string;
+      greeting: string;
+      greeting_translation: string;
+      useful_expressions: { ja: string; vi: string }[];
+    };
     try {
       const parsed = parseJsonResponse(contextResponse.content);
       context = {
@@ -51,6 +57,7 @@ export async function POST(request: Request) {
         scenario: (parsed.scenario as string) || topic.description,
         greeting: (parsed.greeting as string) || 'こんにちは！よろしくお願いします。',
         greeting_translation: (parsed.greeting_translation as string) || '',
+        useful_expressions: Array.isArray(parsed.useful_expressions) ? parsed.useful_expressions as { ja: string; vi: string }[] : [],
       };
     } catch {
       // Fallback if AI doesn't return valid JSON
@@ -59,6 +66,7 @@ export async function POST(request: Request) {
         scenario: topic.description,
         greeting: 'こんにちは！よろしくお願いします。',
         greeting_translation: 'Xin chào! Rất vui được làm việc cùng bạn.',
+        useful_expressions: [],
       };
     }
 
@@ -71,7 +79,7 @@ export async function POST(request: Request) {
         title: topic.title,
         status: 'active',
         ai_role: context.ai_role,
-        context_details: { scenario: context.scenario },
+        context_details: { scenario: context.scenario, useful_expressions: context.useful_expressions },
       })
       .select('id')
       .single();

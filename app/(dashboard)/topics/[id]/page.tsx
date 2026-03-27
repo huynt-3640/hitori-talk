@@ -11,6 +11,8 @@ interface Topic {
   description: string;
   category: string;
   icon: string;
+  example_phrases: { ja: string; vi: string }[];
+  tips: string[];
 }
 
 interface ConversationSummary {
@@ -35,7 +37,7 @@ export default function TopicDetailPage() {
 
       const { data: topicData } = await supabase
         .from('topics')
-        .select('id, title, title_ja, description, category, icon')
+        .select('id, title, title_ja, description, category, icon, example_phrases, tips')
         .eq('id', topicId)
         .single();
       if (topicData) setTopic(topicData);
@@ -125,16 +127,17 @@ export default function TopicDetailPage() {
             <StatCard label="Accuracy" value={stats.accuracy} colorClass="text-success" />
           </div>
 
-          {/* Example Phrases (desktop only) */}
-          <div className="hidden md:block">
-            <h3 className="mb-4 text-xl font-bold text-foreground">Example Phrases</h3>
-            <div className="flex flex-col gap-3">
-              <PhraseCard jp="昨日はAPIの修正をしました。" vi="Hôm qua tôi đã sửa API." />
-              <PhraseCard jp="今日はテストを書く予定です。" vi="Hôm nay tôi dự định viết test." />
-              <PhraseCard jp="ブロッカーは特にありません。" vi="Không có blocker đặc biệt nào." />
-              <PhraseCard jp="プルリクエストのレビューをお願いします。" vi="Xin hãy review pull request." />
+          {/* Example Phrases */}
+          {topic.example_phrases && topic.example_phrases.length > 0 && (
+            <div>
+              <h3 className="mb-4 text-xl font-bold text-foreground">Example Phrases</h3>
+              <div className="flex flex-col gap-3">
+                {topic.example_phrases.map((phrase, i) => (
+                  <PhraseCard key={i} jp={phrase.ja} vi={phrase.vi} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Right Column */}
@@ -168,14 +171,17 @@ export default function TopicDetailPage() {
           )}
 
           {/* Tips Card */}
-          <div className="glass-card rounded-2xl p-5 md:p-6">
-            <h3 className="mb-4 text-base font-bold text-foreground md:text-lg">💡 Tips</h3>
-            <div className="flex flex-col">
-              <TipItem emoji="1️⃣" text="Start with 昨日は... to report what you did yesterday" />
-              <TipItem emoji="2️⃣" text="Use 今日は...予定です for today's plan" />
-              <TipItem emoji="3️⃣" text="End with blockers: 問題は特にありません" />
+          {topic.tips && topic.tips.length > 0 && (
+            <div className="glass-card rounded-2xl p-5 md:p-6">
+              <h3 className="mb-4 text-base font-bold text-foreground md:text-lg">💡 Tips</h3>
+              <div className="flex flex-col">
+                {topic.tips.map((tip, i) => {
+                  const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'];
+                  return <TipItem key={i} emoji={emojis[i] || '💡'} text={tip} />;
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Mobile Start Button (bottom) */}
           <div className="md:hidden">
