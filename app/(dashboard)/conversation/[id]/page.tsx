@@ -190,6 +190,7 @@ export default function ConversationPage() {
     );
   }
 
+  const isPractice = !conversation?.topic_id;
   const contextDetails = conversation?.context_details as {
     scenario?: string;
     useful_expressions?: { ja: string; vi: string }[];
@@ -290,7 +291,8 @@ export default function ConversationPage() {
           />
         </div>
 
-        {/* Context Panel (desktop only) */}
+        {/* Context Panel (desktop only, hidden for practice mode) */}
+        {!isPractice && (
         <aside className="hidden w-[340px] shrink-0 flex-col gap-6 overflow-y-auto border-l border-glass-border bg-[rgba(15,15,26,0.3)] p-6 backdrop-blur-xl lg:flex">
           {/* Scenario */}
           <div>
@@ -347,7 +349,29 @@ export default function ConversationPage() {
             </div>
           </div>
         </aside>
+        )}
       </div>
+
+      {/* Ending Overlay */}
+      {ending && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-[rgba(15,15,26,0.9)] backdrop-blur-md">
+          <div className="relative">
+            <div className="h-16 w-16 animate-spin rounded-full border-[3px] border-glass-border border-t-primary" />
+            <div className="absolute inset-0 flex items-center justify-center text-2xl">✨</div>
+          </div>
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h2 className="text-xl font-bold text-foreground">Wrapping up...</h2>
+            <p className="max-w-[280px] text-sm leading-relaxed text-foreground-secondary">
+              Calculating your XP and checking achievements
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]" />
+            <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-primary [animation-delay:150ms]" />
+            <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-primary [animation-delay:300ms]" />
+          </div>
+        </div>
+      )}
 
       {/* Completion Overlay */}
       {completionData && (

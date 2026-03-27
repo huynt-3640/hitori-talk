@@ -16,22 +16,57 @@ export async function POST(request: Request) {
     }
 
     const { topic_id } = await request.json();
+
+    const profileResult = await supabase
+      .from('profiles')
+      .select('jlpt_level')
+      .eq('id', user.id)
+      .single();
+    const jlptLevel = (profileResult.data?.jlpt_level ?? 'N5') as JLPTLevel;
+
+    // Practice mode (no topic) vs Topic mode
     if (!topic_id) {
-      return NextResponse.json({ error: 'topic_id is required' }, { status: 400 });
+      // Free Practice mode
+      const { data: conversation, error: convError } = await supabase
+        .from('conversations')
+        .insert({
+          user_id: user.id,
+          topic_id: null,
+          title: 'Free Practice',
+          status: 'active',
+          ai_role: 'Japanese conversation partner',
+          context_details: {},
+        })
+        .select('id')
+        .single();
+
+      if (convError || !conversation) {
+        return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 });
+      }
+
+      // Greeting: ask what the user wants to talk about
+      await supabase.from('messages').insert({
+        conversation_id: conversation.id,
+        role: 'assistant',
+        content: 'こんにちは！今日は何について話しましょうか？仕事、趣味、旅行、何でもいいですよ。',
+        translation: 'Xin chào! Hôm nay chúng ta nói về chủ đề gì nhỉ? Công việc, sở thích, du lịch, gì cũng được nhé.',
+      });
+
+      return NextResponse.json({ id: conversation.id });
     }
 
-    // Fetch topic and profile
-    const [topicResult, profileResult] = await Promise.all([
-      supabase.from('topics').select('*').eq('id', topic_id).single(),
-      supabase.from('profiles').select('jlpt_level').eq('id', user.id).single(),
-    ]);
+    // Topic mode — fetch topic and generate context
+    const topicResult = await supabase
+      .from('topics')
+      .select('*')
+      .eq('id', topic_id)
+      .single();
 
     if (topicResult.error || !topicResult.data) {
       return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
     }
 
     const topic = topicResult.data;
-    const jlptLevel = (profileResult.data?.jlpt_level ?? 'N5') as JLPTLevel;
 
     // Generate context using AI
     const contextPrompt = buildContextGenerationPrompt(
@@ -60,7 +95,6 @@ export async function POST(request: Request) {
         useful_expressions: Array.isArray(parsed.useful_expressions) ? parsed.useful_expressions as { ja: string; vi: string }[] : [],
       };
     } catch {
-      // Fallback if AI doesn't return valid JSON
       context = {
         ai_role: 'Japanese colleague',
         scenario: topic.description,

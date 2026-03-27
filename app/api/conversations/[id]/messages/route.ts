@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { chatCompletion } from '@/lib/ai/chat';
-import { buildSystemPrompt } from '@/lib/ai/prompts';
+import { buildSystemPrompt, buildPracticeSystemPrompt } from '@/lib/ai/prompts';
 import { parseJsonResponse } from '@/lib/ai/parse-json-response';
 import type { JLPTLevel } from '@/types';
 
@@ -92,13 +92,16 @@ export async function POST(
       .eq('conversation_id', params.id)
       .order('created_at', { ascending: true });
 
-    // Build AI prompt
-    const systemPrompt = buildSystemPrompt({
-      jlptLevel,
-      topicTitle: conversation.title,
-      contextPrompt: contextDetails?.scenario ?? '',
-      aiRole: conversation.ai_role,
-    });
+    // Build AI prompt — use practice prompt for free conversations (no topic)
+    const isPractice = !conversation.topic_id;
+    const systemPrompt = isPractice
+      ? buildPracticeSystemPrompt(jlptLevel)
+      : buildSystemPrompt({
+          jlptLevel,
+          topicTitle: conversation.title,
+          contextPrompt: contextDetails?.scenario ?? '',
+          aiRole: conversation.ai_role,
+        });
 
     const messages = [
       { role: 'system' as const, content: systemPrompt },

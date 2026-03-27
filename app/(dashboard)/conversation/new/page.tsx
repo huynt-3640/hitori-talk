@@ -7,18 +7,20 @@ export default function NewConversationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const topicId = searchParams.get('topic_id');
+  const isPractice = searchParams.get('practice') === 'true';
   const creatingRef = useRef(false);
 
   useEffect(() => {
-    if (!topicId || creatingRef.current) return;
+    if ((!topicId && !isPractice) || creatingRef.current) return;
     creatingRef.current = true;
 
     async function create() {
       try {
+        const body = isPractice ? {} : { topic_id: topicId };
         const res = await fetch('/api/conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic_id: topicId }),
+          body: JSON.stringify(body),
         });
 
         if (!res.ok) throw new Error('Failed to create conversation');
@@ -26,12 +28,12 @@ export default function NewConversationPage() {
         const { id } = await res.json();
         router.replace(`/conversation/${id}`);
       } catch {
-        router.replace('/topics');
+        router.replace(isPractice ? '/practice' : '/topics');
       }
     }
 
     create();
-  }, [topicId, router]);
+  }, [topicId, isPractice, router]);
 
   return (
     <div className="flex h-[calc(100vh-var(--bottom-nav-height))] flex-col items-center justify-center gap-6 md:h-screen">
