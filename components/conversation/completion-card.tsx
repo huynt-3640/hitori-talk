@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface NewAchievement {
   id: string;
@@ -30,6 +31,7 @@ export function CompletionCard({
   newAchievements,
 }: CompletionCardProps) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.6)] backdrop-blur-sm">
@@ -39,7 +41,7 @@ export function CompletionCard({
           <div className="mb-6 text-center">
             <div className="mb-3 text-5xl">{levelUp ? '🎉' : '✨'}</div>
             <h2 className="text-2xl font-bold text-foreground">
-              {levelUp ? 'Level Up!' : 'Great Practice!'}
+              {levelUp ? t('completion.levelUp') : t('completion.greatPractice')}
             </h2>
             <p className="mt-1 text-sm text-foreground-secondary">
               お疲れ様でした！
@@ -50,11 +52,11 @@ export function CompletionCard({
           <div className="mb-6 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-[rgba(255,255,255,0.05)] p-4 text-center">
               <div className="text-2xl font-bold text-xp">+{xpEarned}</div>
-              <div className="mt-1 text-xs text-foreground-secondary">XP Earned</div>
+              <div className="mt-1 text-xs text-foreground-secondary">{t('completion.xpEarned')}</div>
             </div>
             <div className="rounded-xl bg-[rgba(255,255,255,0.05)] p-4 text-center">
               <div className="text-2xl font-bold text-foreground">{totalXP.toLocaleString()}</div>
-              <div className="mt-1 text-xs text-foreground-secondary">Total XP</div>
+              <div className="mt-1 text-xs text-foreground-secondary">{t('completion.totalXp')}</div>
             </div>
             <div className="rounded-xl bg-[rgba(255,255,255,0.05)] p-4 text-center">
               <div className="text-2xl font-bold text-primary-light">
@@ -67,14 +69,14 @@ export function CompletionCard({
                 )}
               </div>
               <div className="mt-1 text-xs text-foreground-secondary">
-                {levelUp ? 'Level Up!' : 'Level'}
+                {levelUp ? t('completion.levelUp') : t('completion.level')}
               </div>
             </div>
             <div className="rounded-xl bg-[rgba(255,255,255,0.05)] p-4 text-center">
               <div className="text-2xl font-bold text-foreground">
                 🔥 {streak}
               </div>
-              <div className="mt-1 text-xs text-foreground-secondary">Day Streak</div>
+              <div className="mt-1 text-xs text-foreground-secondary">{t('completion.dayStreak')}</div>
             </div>
           </div>
 
@@ -82,7 +84,7 @@ export function CompletionCard({
           {newAchievements.length > 0 && (
             <div className="mb-6">
               <p className="mb-3 text-center text-sm font-semibold text-foreground-secondary">
-                🏆 New Achievements
+                🏆 {t('completion.newAchievements')}
               </p>
               <div className="flex flex-col gap-2">
                 {newAchievements.map((a) => (
@@ -107,7 +109,7 @@ export function CompletionCard({
             onClick={() => router.push('/dashboard')}
             className="w-full rounded-xl bg-primary px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-primary-hover"
           >
-            Back to Dashboard
+            {t('completion.backToDashboard')}
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CorrectionCard } from './correction-card';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface MessageBubbleProps {
   role: string;
@@ -30,6 +31,7 @@ export function MessageBubble({
   onSpeak,
 }: MessageBubbleProps) {
   const [showTranslation, setShowTranslation] = useState(false);
+  const { t } = useTranslation();
   const isUser = role === 'user';
 
   return (
@@ -58,7 +60,7 @@ export function MessageBubble({
             onClick={() => setShowTranslation(!showTranslation)}
             className="self-start text-xs text-primary-light hover:underline"
           >
-            {showTranslation ? 'Hide translation' : 'Show translation'}
+            {showTranslation ? t('message.hideTranslation') : t('message.showTranslation')}
           </button>
           {showTranslation && (
             <div className="rounded-lg border-l-2 border-primary-soft bg-[rgba(255,255,255,0.04)] px-3 py-2 text-sm text-foreground-secondary">
@@ -71,13 +73,13 @@ export function MessageBubble({
       {/* Meta: timestamp + speaker button */}
       <div className={cn('flex items-center gap-2 px-1', isUser ? 'justify-end' : 'justify-start')}>
         <span className="text-xs text-foreground-secondary">
-          {isUser ? 'You' : aiName ?? 'AI'} · {formatTime(createdAt)}
+          {isUser ? t('message.you') : aiName ?? t('message.ai')} · {formatTime(createdAt)}
         </span>
         {!isUser && onSpeak && (
           <button
             onClick={() => onSpeak(content)}
             className="text-xs text-foreground-secondary transition-colors hover:text-primary-light"
-            title="Listen"
+            title={t('message.listen')}
           >
             🔊
           </button>

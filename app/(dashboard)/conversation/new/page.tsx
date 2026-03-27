@@ -2,10 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function NewConversationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const topicId = searchParams.get('topic_id');
   const isPractice = searchParams.get('practice') === 'true';
   const creatingRef = useRef(false);
@@ -45,9 +47,9 @@ export default function NewConversationPage() {
 
       {/* Text */}
       <div className="flex flex-col items-center gap-2 text-center">
-        <h2 className="text-xl font-bold text-foreground">Preparing your conversation...</h2>
+        <h2 className="text-xl font-bold text-foreground">{t('conversation.preparing')}</h2>
         <p className="max-w-[280px] text-sm leading-relaxed text-foreground-secondary">
-          AI is setting up the scenario and choosing a character for you
+          {t('conversation.preparingDesc')}
         </p>
       </div>
 

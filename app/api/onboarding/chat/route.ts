@@ -8,7 +8,7 @@ import {
 } from '@/lib/ai/onboarding-prompts';
 import { parseJsonResponse } from '@/lib/ai/parse-json-response';
 import { ONBOARDING_TEST_MESSAGES } from '@/config/constants';
-import type { JLPTLevel } from '@/types';
+import type { JLPTLevel, SupportedLanguage } from '@/types';
 
 export async function POST(request: Request) {
   try {
@@ -21,21 +21,33 @@ export async function POST(request: Request) {
     const { action, jlpt_level, message, history } = await request.json();
     const level = (jlpt_level || 'N5') as JLPTLevel;
 
+    // Fetch user's preferred language
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('preferred_language')
+      .eq('id', user.id)
+      .single();
+    const lang = (profile?.preferred_language ?? 'vi') as SupportedLanguage;
+
     // Generate initial greeting
     if (action === 'greeting') {
-      const prompt = buildOnboardingGreetingPrompt(level);
+      const prompt = buildOnboardingGreetingPrompt(level, lang);
       const result = await chatCompletion([{ role: 'user', content: prompt }]);
 
       try {
         const parsed = parseJsonResponse(result.content);
         return NextResponse.json({
           response: parsed.response || 'こんにちは！お仕事について教えてください。',
-          translation: parsed.translation || 'Xin chào! Hãy kể cho tôi về công việc của bạn.',
+          translation: parsed.translation || (lang === 'vi'
+            ? 'Xin chào! Hãy kể cho tôi về công việc của bạn.'
+            : 'Hello! Tell me about your work.'),
         });
       } catch {
         return NextResponse.json({
           response: 'こんにちは！IT業界で働いているそうですね。どんなお仕事をされていますか？',
-          translation: 'Xin chào! Nghe nói bạn làm trong ngành IT. Bạn làm công việc gì vậy?',
+          translation: lang === 'vi'
+            ? 'Xin chào! Nghe nói bạn làm trong ngành IT. Bạn làm công việc gì vậy?'
+            : 'Hello! I heard you work in IT. What kind of work do you do?',
         });
       }
     }
@@ -46,7 +58,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Message is required' }, { status: 400 });
       }
 
-      const systemPrompt = buildOnboardingSystemPrompt(level);
+      const systemPrompt = buildOnboardingSystemPrompt(level, lang);
       const messages = [
         { role: 'system' as const, content: systemPrompt },
         ...(history || []).map((m: { role: string; content: string }) => ({
@@ -86,7 +98,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'History is required' }, { status: 400 });
       }
 
-      const evalPrompt = buildEvaluationPrompt(level, history);
+      const evalPrompt = buildEvaluationPrompt(level, history, lang);
       const result = await chatCompletion([{ role: 'user', content: evalPrompt }]);
 
       try {
@@ -98,7 +110,9 @@ export async function POST(request: Request) {
       } catch {
         return NextResponse.json({
           evaluated_level: level,
-          reasoning: 'Không thể đánh giá tự động. Sử dụng level bạn đã chọn.',
+          reasoning: lang === 'vi'
+            ? 'Không thể đánh giá tự động. Sử dụng level bạn đã chọn.'
+            : 'Could not evaluate automatically. Using your selected level.',
         });
       }
     }

@@ -8,6 +8,7 @@ import { MessageInput } from '@/components/conversation/message-input';
 import { CompletionCard } from '@/components/conversation/completion-card';
 import { useAudioRecorder } from '@/lib/hooks/use-audio-recorder';
 import { useSpeechSynthesis } from '@/lib/hooks/use-speech-synthesis';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface Message {
   id: string;
@@ -38,6 +39,7 @@ export default function ConversationPage() {
   const [ending, setEnding] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [autoSpeak, setAutoSpeak] = useState(true);
+  const { t } = useTranslation();
   const [completionData, setCompletionData] = useState<{
     xp_earned: number;
     total_xp: number;
@@ -184,7 +186,7 @@ export default function ConversationPage() {
       <div className="flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="text-sm text-foreground-secondary">Loading conversation...</p>
+          <p className="text-sm text-foreground-secondary">{t('conversation.loadingConversation')}</p>
         </div>
       </div>
     );
@@ -193,7 +195,7 @@ export default function ConversationPage() {
   const isPractice = !conversation?.topic_id;
   const contextDetails = conversation?.context_details as {
     scenario?: string;
-    useful_expressions?: { ja: string; vi: string }[];
+    useful_expressions?: { ja: string; translation?: string; vi?: string }[];
   } | null;
   const correctionCount = messages.filter(
     (m) => m.role === 'assistant' && m.corrections && Array.isArray(m.corrections) && m.corrections.length > 0
@@ -240,7 +242,7 @@ export default function ConversationPage() {
           disabled={ending}
           className="shrink-0 rounded-lg border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.1)] px-3 py-1.5 text-xs font-semibold text-destructive md:rounded-xl md:px-5 md:py-2 md:text-sm disabled:opacity-50"
         >
-          {ending ? '...' : 'End'}
+          {ending ? '...' : t('conversation.end')}
         </button>
       </header>
 
@@ -296,19 +298,19 @@ export default function ConversationPage() {
         <aside className="hidden w-[340px] shrink-0 flex-col gap-6 overflow-y-auto border-l border-glass-border bg-[rgba(15,15,26,0.3)] p-6 backdrop-blur-xl lg:flex">
           {/* Scenario */}
           <div>
-            <h3 className="mb-3 font-bold text-foreground">📋 Scenario</h3>
+            <h3 className="mb-3 font-bold text-foreground">📋 {t('conversation.scenario')}</h3>
             <div className="glass-card flex flex-col gap-3 rounded-2xl p-4">
               <div>
-                <p className="text-xs uppercase tracking-wider text-foreground-secondary">Your Role</p>
-                <p className="mt-1 text-foreground">Developer</p>
+                <p className="text-xs uppercase tracking-wider text-foreground-secondary">{t('conversation.yourRole')}</p>
+                <p className="mt-1 text-foreground">{t('common.developer')}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-foreground-secondary">AI Role</p>
+                <p className="text-xs uppercase tracking-wider text-foreground-secondary">{t('conversation.aiRole')}</p>
                 <p className="mt-1 text-foreground">{conversation?.ai_role}</p>
               </div>
               {contextDetails?.scenario && (
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-foreground-secondary">Context</p>
+                  <p className="text-xs uppercase tracking-wider text-foreground-secondary">{t('conversation.context')}</p>
                   <p className="mt-1 text-foreground">{contextDetails.scenario}</p>
                 </div>
               )}
@@ -318,12 +320,12 @@ export default function ConversationPage() {
           {/* Useful Expressions */}
           {contextDetails?.useful_expressions && contextDetails.useful_expressions.length > 0 && (
             <div>
-              <h3 className="mb-3 font-bold text-foreground">📝 Useful Expressions</h3>
+              <h3 className="mb-3 font-bold text-foreground">📝 {t('conversation.usefulExpressions')}</h3>
               <div className="glass-card flex flex-col gap-2 rounded-2xl p-4">
                 {contextDetails.useful_expressions.map((expr, i) => (
                   <div key={i} className="border-b border-glass-border py-2 last:border-0 last:pb-0">
                     <p className="text-sm font-semibold text-foreground">{expr.ja}</p>
-                    <p className="mt-0.5 text-xs text-foreground-secondary">{expr.vi}</p>
+                    <p className="mt-0.5 text-xs text-foreground-secondary">{expr.translation ?? expr.vi}</p>
                   </div>
                 ))}
               </div>
@@ -332,18 +334,18 @@ export default function ConversationPage() {
 
           {/* Session Stats */}
           <div>
-            <h3 className="mb-3 font-bold text-foreground">📊 This Session</h3>
+            <h3 className="mb-3 font-bold text-foreground">📊 {t('conversation.thisSession')}</h3>
             <div className="glass-card flex flex-col rounded-2xl p-4">
               <div className="flex items-center justify-between border-b border-glass-border py-2">
-                <span className="text-sm text-foreground-secondary">Duration</span>
+                <span className="text-sm text-foreground-secondary">{t('conversation.duration')}</span>
                 <span className="font-semibold">{formatTime(elapsed)}</span>
               </div>
               <div className="flex items-center justify-between border-b border-glass-border py-2">
-                <span className="text-sm text-foreground-secondary">Messages</span>
+                <span className="text-sm text-foreground-secondary">{t('common.messages')}</span>
                 <span className="font-semibold">{messages.length}</span>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span className="text-sm text-foreground-secondary">Corrections</span>
+                <span className="text-sm text-foreground-secondary">{t('conversation.corrections')}</span>
                 <span className="font-semibold text-warning">{correctionCount}</span>
               </div>
             </div>
@@ -360,9 +362,9 @@ export default function ConversationPage() {
             <div className="absolute inset-0 flex items-center justify-center text-2xl">✨</div>
           </div>
           <div className="flex flex-col items-center gap-2 text-center">
-            <h2 className="text-xl font-bold text-foreground">Wrapping up...</h2>
+            <h2 className="text-xl font-bold text-foreground">{t('conversation.wrappingUp')}</h2>
             <p className="max-w-[280px] text-sm leading-relaxed text-foreground-secondary">
-              Calculating your XP and checking achievements
+              {t('conversation.wrappingUpDesc')}
             </p>
           </div>
           <div className="flex gap-2">

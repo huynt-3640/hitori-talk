@@ -1,4 +1,5 @@
 export type JLPTLevel = 'N5' | 'N4' | 'N3' | 'N2' | 'N1';
+export type SupportedLanguage = 'vi' | 'en';
 export type ConversationStatus = 'active' | 'completed' | 'abandoned';
 export type MessageRole = 'user' | 'assistant';
 export type MistakeType = 'grammar' | 'vocabulary' | 'particle' | 'conjugation' | 'politeness';

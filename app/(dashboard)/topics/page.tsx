@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { TopicCard } from '@/components/dashboard/topic-card';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface Topic {
   id: string;
@@ -18,6 +19,7 @@ interface Topic {
 const CATEGORIES = ['All', 'Work', 'Technical', 'Business', 'Casual'];
 
 export default function TopicsPage() {
+  const { t } = useTranslation();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -36,25 +38,29 @@ export default function TopicsPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    return topics.filter((t) => {
-      const matchesCategory = activeCategory === 'All' || t.category === activeCategory;
+    return topics.filter((tp) => {
+      const matchesCategory = activeCategory === 'All' || tp.category === activeCategory;
       const matchesSearch =
         !search ||
-        t.title.toLowerCase().includes(search.toLowerCase()) ||
-        t.title_ja.includes(search) ||
-        t.description.toLowerCase().includes(search.toLowerCase());
+        tp.title.toLowerCase().includes(search.toLowerCase()) ||
+        tp.title_ja.includes(search) ||
+        tp.description.toLowerCase().includes(search.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [topics, activeCategory, search]);
+
+  const categoryLabels: Record<string, string> = {
+    All: t('topics.all'),
+  };
 
   return (
     <div className="p-5 md:p-10 md:pl-12">
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-[28px] font-bold text-foreground md:text-[42px]">Topics</h1>
+          <h1 className="text-[28px] font-bold text-foreground md:text-[42px]">{t('topics.title')}</h1>
           <p className="mt-1 text-[13px] text-foreground-secondary md:text-lg">
-            Choose a scenario to practice
+            {t('topics.subtitle')}
           </p>
         </div>
 
@@ -65,7 +71,7 @@ export default function TopicsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search topics..."
+            placeholder={t('topics.searchPlaceholder')}
             className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-foreground-secondary md:text-base"
           />
         </div>
@@ -84,7 +90,7 @@ export default function TopicsPage() {
                 : 'border-glass-border bg-glass text-foreground-secondary hover:bg-glass-hover'
             )}
           >
-            {cat}
+            {categoryLabels[cat] ?? cat}
           </button>
         ))}
       </div>
@@ -114,7 +120,7 @@ export default function TopicsPage() {
         >
           <span className="text-[28px] opacity-50">➕</span>
           <span className="text-sm font-semibold text-foreground-secondary md:text-base">
-            Create Custom Topic
+            {t('topics.createCustom')}
           </span>
         </Link>
       </div>
@@ -123,9 +129,9 @@ export default function TopicsPage() {
       {!loading && filtered.length === 0 && (
         <div className="mt-12 flex flex-col items-center gap-3 text-center">
           <span className="text-5xl">🔍</span>
-          <p className="text-lg font-semibold text-foreground">No topics found</p>
+          <p className="text-lg font-semibold text-foreground">{t('topics.noTopicsFound')}</p>
           <p className="text-sm text-foreground-secondary">
-            Try a different search or category
+            {t('topics.noTopicsHint')}
           </p>
         </div>
       )}

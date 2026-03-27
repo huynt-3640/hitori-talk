@@ -272,6 +272,7 @@ export type Database = {
           level: number
           longest_streak: number
           onboarding_completed: boolean
+          preferred_language: string
           total_conversations: number
           total_messages: number
           total_xp: number
@@ -288,6 +289,7 @@ export type Database = {
           level?: number
           longest_streak?: number
           onboarding_completed?: boolean
+          preferred_language?: string
           total_conversations?: number
           total_messages?: number
           total_xp?: number
@@ -304,6 +306,7 @@ export type Database = {
           level?: number
           longest_streak?: number
           onboarding_completed?: boolean
+          preferred_language?: string
           total_conversations?: number
           total_messages?: number
           total_xp?: number

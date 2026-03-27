@@ -6,13 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
-
-const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Home', icon: '🏠' },
-  { href: '/topics', label: 'Topics', icon: '📚' },
-  { href: '/practice', label: 'Practice', icon: '🎤' },
-  { href: '/settings', label: 'Settings', icon: '⚙️' },
-];
+import { useTranslation } from '@/lib/i18n/context';
 
 interface NavigationProps {
   profile?: {
@@ -25,7 +19,15 @@ interface NavigationProps {
 export function Navigation({ profile }: NavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation();
   const [loggingOut, setLoggingOut] = useState(false);
+
+  const NAV_ITEMS = [
+    { href: '/dashboard', label: t('nav.home'), icon: '🏠' },
+    { href: '/topics', label: t('nav.topics'), icon: '📚' },
+    { href: '/practice', label: t('nav.practice'), icon: '🎤' },
+    { href: '/settings', label: t('nav.settings'), icon: '⚙️' },
+  ];
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -93,7 +95,7 @@ export function Navigation({ profile }: NavigationProps) {
                 onClick={handleLogout}
                 disabled={loggingOut}
                 className="shrink-0 rounded-lg p-2 text-foreground-secondary transition-colors hover:bg-glass-hover hover:text-destructive"
-                title="Log out"
+                title={t('settings.logOut')}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

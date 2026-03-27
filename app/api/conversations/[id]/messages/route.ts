@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { chatCompletion } from '@/lib/ai/chat';
 import { buildSystemPrompt, buildPracticeSystemPrompt } from '@/lib/ai/prompts';
 import { parseJsonResponse } from '@/lib/ai/parse-json-response';
-import type { JLPTLevel } from '@/types';
+import type { JLPTLevel, SupportedLanguage } from '@/types';
 
 export async function GET(
   _request: Request,
@@ -67,7 +67,7 @@ export async function POST(
         .eq('id', params.id)
         .eq('user_id', user.id)
         .single(),
-      supabase.from('profiles').select('jlpt_level').eq('id', user.id).single(),
+      supabase.from('profiles').select('jlpt_level, preferred_language').eq('id', user.id).single(),
     ]);
 
     if (!convResult.data) {
@@ -76,6 +76,7 @@ export async function POST(
 
     const conversation = convResult.data;
     const jlptLevel = (profileResult.data?.jlpt_level ?? 'N5') as JLPTLevel;
+    const lang = (profileResult.data?.preferred_language ?? 'vi') as SupportedLanguage;
     const contextDetails = conversation.context_details as { scenario?: string } | null;
 
     // Insert user message
@@ -95,12 +96,13 @@ export async function POST(
     // Build AI prompt — use practice prompt for free conversations (no topic)
     const isPractice = !conversation.topic_id;
     const systemPrompt = isPractice
-      ? buildPracticeSystemPrompt(jlptLevel)
+      ? buildPracticeSystemPrompt(jlptLevel, lang)
       : buildSystemPrompt({
           jlptLevel,
           topicTitle: conversation.title,
           contextPrompt: contextDetails?.scenario ?? '',
           aiRole: conversation.ai_role,
+          lang,
         });
 
     const messages = [

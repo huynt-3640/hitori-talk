@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface PracticeSession {
   id: string;
@@ -14,6 +15,7 @@ interface PracticeSession {
 
 export default function PracticePage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [sessions, setSessions] = useState<PracticeSession[]>([]);
 
   useEffect(() => {
@@ -43,10 +45,10 @@ export default function PracticePage() {
 
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-foreground md:text-[42px] md:leading-tight">
-            Free Practice
+            {t('practice.title')}
           </h1>
           <p className="text-lg leading-relaxed text-foreground-secondary md:text-xl">
-            Practice Japanese conversation on any topic you want
+            {t('practice.subtitle')}
           </p>
         </div>
 
@@ -54,19 +56,19 @@ export default function PracticePage() {
           <div className="flex items-start gap-3">
             <span className="shrink-0 text-lg">💬</span>
             <p className="text-sm leading-relaxed text-foreground-secondary md:text-base">
-              Tell AI what you want to talk about — work, hobbies, travel, or anything else
+              {t('practice.feature1')}
             </p>
           </div>
           <div className="flex items-start gap-3">
             <span className="shrink-0 text-lg">✏️</span>
             <p className="text-sm leading-relaxed text-foreground-secondary md:text-base">
-              AI will correct your mistakes and provide Vietnamese translations
+              {t('practice.feature2')}
             </p>
           </div>
           <div className="flex items-start gap-3">
             <span className="shrink-0 text-lg">🎯</span>
             <p className="text-sm leading-relaxed text-foreground-secondary md:text-base">
-              Earn XP and maintain your daily streak
+              {t('practice.feature3')}
             </p>
           </div>
         </div>
@@ -75,14 +77,14 @@ export default function PracticePage() {
           onClick={() => router.push('/conversation/new?practice=true')}
           className="btn-primary-gradient w-full max-w-[320px] rounded-xl px-8 py-4 text-lg font-semibold md:px-10"
         >
-          🎤 Start Conversation
+          🎤 {t('practice.startConversation')}
         </button>
       </div>
 
       {/* Recent Sessions */}
       {sessions.length > 0 && (
         <div className="mx-auto mt-10 w-full max-w-[600px]">
-          <h3 className="mb-4 text-lg font-bold text-foreground md:text-xl">Recent Practice</h3>
+          <h3 className="mb-4 text-lg font-bold text-foreground md:text-xl">{t('practice.recentPractice')}</h3>
           <div className="flex flex-col gap-3">
             {sessions.map((s) => (
               <button
@@ -97,7 +99,7 @@ export default function PracticePage() {
                     {new Date(s.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                   <p className="mt-0.5 text-xs text-foreground-secondary md:text-sm">
-                    {s.message_count} messages · {s.status === 'active' ? 'In progress' : 'Completed'}
+                    {s.message_count} {t('common.messages')} · {s.status === 'active' ? t('practice.inProgress') : t('practice.completed')}
                   </p>
                 </div>
                 <span className="text-sm font-bold text-xp md:text-base">+{s.xp_earned} XP</span>

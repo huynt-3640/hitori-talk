@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { chatCompletion } from '@/lib/ai/chat';
 import { buildContextGenerationPrompt } from '@/lib/ai/prompts';
 import { parseJsonResponse } from '@/lib/ai/parse-json-response';
-import type { JLPTLevel } from '@/types';
+import type { JLPTLevel, SupportedLanguage } from '@/types';
 
 export async function POST(request: Request) {
   try {
@@ -19,10 +19,11 @@ export async function POST(request: Request) {
 
     const profileResult = await supabase
       .from('profiles')
-      .select('jlpt_level')
+      .select('jlpt_level, preferred_language')
       .eq('id', user.id)
       .single();
     const jlptLevel = (profileResult.data?.jlpt_level ?? 'N5') as JLPTLevel;
+    const lang = (profileResult.data?.preferred_language ?? 'vi') as SupportedLanguage;
 
     // Practice mode (no topic) vs Topic mode
     if (!topic_id) {
@@ -45,11 +46,14 @@ export async function POST(request: Request) {
       }
 
       // Greeting: ask what the user wants to talk about
+      const practiceTranslation = lang === 'vi'
+        ? 'Xin chào! Hôm nay chúng ta nói về chủ đề gì nhỉ? Công việc, sở thích, du lịch, gì cũng được nhé.'
+        : 'Hello! What shall we talk about today? Work, hobbies, travel — anything is fine!';
       await supabase.from('messages').insert({
         conversation_id: conversation.id,
         role: 'assistant',
         content: 'こんにちは！今日は何について話しましょうか？仕事、趣味、旅行、何でもいいですよ。',
-        translation: 'Xin chào! Hôm nay chúng ta nói về chủ đề gì nhỉ? Công việc, sở thích, du lịch, gì cũng được nhé.',
+        translation: practiceTranslation,
       });
 
       return NextResponse.json({ id: conversation.id });
@@ -71,7 +75,8 @@ export async function POST(request: Request) {
     // Generate context using AI
     const contextPrompt = buildContextGenerationPrompt(
       topic.context_generation_prompt,
-      jlptLevel
+      jlptLevel,
+      lang
     );
 
     const contextResponse = await chatCompletion(
@@ -83,7 +88,7 @@ export async function POST(request: Request) {
       scenario: string;
       greeting: string;
       greeting_translation: string;
-      useful_expressions: { ja: string; vi: string }[];
+      useful_expressions: { ja: string; translation: string }[];
     };
     try {
       const parsed = parseJsonResponse(contextResponse.content);
@@ -92,14 +97,16 @@ export async function POST(request: Request) {
         scenario: (parsed.scenario as string) || topic.description,
         greeting: (parsed.greeting as string) || 'こんにちは！よろしくお願いします。',
         greeting_translation: (parsed.greeting_translation as string) || '',
-        useful_expressions: Array.isArray(parsed.useful_expressions) ? parsed.useful_expressions as { ja: string; vi: string }[] : [],
+        useful_expressions: Array.isArray(parsed.useful_expressions) ? parsed.useful_expressions as { ja: string; translation: string }[] : [],
       };
     } catch {
       context = {
         ai_role: 'Japanese colleague',
         scenario: topic.description,
         greeting: 'こんにちは！よろしくお願いします。',
-        greeting_translation: 'Xin chào! Rất vui được làm việc cùng bạn.',
+        greeting_translation: lang === 'vi'
+          ? 'Xin chào! Rất vui được làm việc cùng bạn.'
+          : 'Hello! Nice to work with you.',
         useful_expressions: [],
       };
     }

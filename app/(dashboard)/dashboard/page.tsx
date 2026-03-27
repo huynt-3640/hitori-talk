@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { TopicCard } from '@/components/dashboard/topic-card';
+import { getServerTranslations } from '@/lib/i18n/server';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -20,6 +21,7 @@ function formatDate(): string {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const { t } = await getServerTranslations();
 
   const today = new Date().toISOString().split('T')[0];
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -73,6 +75,10 @@ export default async function DashboardPage() {
     ? profile.display_name.slice(0, 2).toUpperCase()
     : '??';
 
+  const minutesCompletedText = t('dashboard.minutesCompleted')
+    .replace('{current}', String(todayMinutes))
+    .replace('{goal}', String(dailyGoal));
+
   return (
     <div className="p-5 md:p-10 md:pl-12">
       {/* Mobile Header with Logo */}
@@ -102,7 +108,7 @@ export default async function DashboardPage() {
             {(profile?.total_xp ?? 0).toLocaleString()}
           </div>
           <div className="mt-1 text-xs font-medium text-foreground-secondary md:mt-2 md:text-base">
-            Total XP
+            {t('dashboard.totalXp')}
           </div>
         </div>
 
@@ -110,31 +116,31 @@ export default async function DashboardPage() {
         <div className="glass-card rounded-xl p-4 transition-all hover:border-glass-border-strong hover:bg-glass-hover md:rounded-2xl md:p-6 md:hover:-translate-y-0.5">
           <div className="mb-3 text-[28px] md:mb-4 md:text-[32px]">🔥</div>
           <div className="text-2xl font-bold text-foreground md:text-[44px] md:leading-none">
-            {profile?.current_streak ?? 0} days
+            {profile?.current_streak ?? 0} {t('dashboard.days')}
           </div>
           <div className="mt-1 text-xs font-medium text-foreground-secondary md:mt-2 md:text-base">
-            Current Streak
+            {t('dashboard.currentStreak')}
           </div>
         </div>
 
-        {/* CTA Card (full width mobile, 2 cols + 2 rows desktop) */}
+        {/* CTA Card */}
         <div className="col-span-2 flex flex-col justify-between rounded-xl p-5 transition-all hover:-translate-y-0.5 md:row-span-2 md:rounded-2xl md:p-8" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)', boxShadow: '0 8px 32px rgba(124, 58, 237, 0.4)' }}>
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-white/60 md:text-sm">
-              Ready to practice?
+              {t('dashboard.readyToPractice')}
             </div>
             <div className="mt-2 text-xl font-bold text-white md:mt-4 md:text-4xl">
-              Start a Conversation
+              {t('dashboard.startConversation')}
             </div>
             <div className="mt-1 text-sm text-white/70 md:mt-3 md:max-w-[500px] md:text-lg md:leading-relaxed">
-              Pick a topic or free talk to practice your Japanese skills
+              {t('dashboard.pickTopic')}
             </div>
           </div>
           <Link
             href="/topics"
             className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl border border-white/25 bg-white/20 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:px-8 md:py-4 md:text-base"
           >
-            ▶ Start Now
+            ▶ {t('dashboard.startNow')}
           </Link>
         </div>
 
@@ -145,7 +151,7 @@ export default async function DashboardPage() {
             {profile?.level ?? 1}
           </div>
           <div className="mt-1 text-xs font-medium text-foreground-secondary md:mt-2 md:text-base">
-            Level
+            {t('dashboard.level')}
           </div>
         </div>
 
@@ -156,32 +162,32 @@ export default async function DashboardPage() {
             {profile?.jlpt_level ?? 'N5'}
           </div>
           <div className="mt-1 text-xs font-medium text-foreground-secondary md:mt-2 md:text-base">
-            JLPT Level
+            {t('dashboard.jlptLevel')}
           </div>
         </div>
 
-        {/* Today's Goal (full width on mobile, 2 cols on desktop) */}
+        {/* Today's Goal */}
         <div className="glass-card col-span-2 rounded-xl p-4 transition-all hover:border-glass-border-strong hover:bg-glass-hover md:rounded-2xl md:p-6">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-foreground md:text-lg">🎯 Today&apos;s Goal</span>
+            <span className="text-sm font-semibold text-foreground md:text-lg">🎯 {t('dashboard.todaysGoal')}</span>
             <span className="text-sm font-bold text-primary-light md:text-base">{goalPercent}%</span>
           </div>
           <div className="progress-bar mt-3">
             <div className="progress-fill" style={{ width: `${goalPercent}%` }} />
           </div>
           <p className="mt-2 text-xs text-foreground-secondary md:mt-3 md:text-sm">
-            {todayMinutes} / {dailyGoal} minutes completed
+            {minutesCompletedText}
           </p>
         </div>
 
-        {/* This Week (desktop only, 2 cols) */}
+        {/* This Week (desktop only) */}
         <div className="glass-card col-span-2 hidden rounded-2xl p-6 transition-all hover:border-glass-border-strong hover:bg-glass-hover md:block">
-          <p className="mb-4 text-lg font-semibold text-foreground">📊 This Week</p>
+          <p className="mb-4 text-lg font-semibold text-foreground">📊 {t('dashboard.thisWeek')}</p>
           <div className="flex flex-col gap-4">
-            <WeekRow label="Conversations" value={String(weekConversations)} />
-            <WeekRow label="Practice Time" value={`${weekMinutes} min`} />
-            <WeekRow label="XP Earned" value={`+${weekXP}`} valueClass="text-xp" />
-            <WeekRow label="Accuracy" value={weekAccuracy !== null ? `${weekAccuracy}%` : '—'} valueClass="text-success" />
+            <WeekRow label={t('dashboard.conversations')} value={String(weekConversations)} />
+            <WeekRow label={t('dashboard.practiceTime')} value={`${weekMinutes} ${t('common.minutes')}`} />
+            <WeekRow label={t('dashboard.xpEarned')} value={`+${weekXP}`} valueClass="text-xp" />
+            <WeekRow label={t('dashboard.accuracy')} value={weekAccuracy !== null ? `${weekAccuracy}%` : '—'} valueClass="text-success" />
           </div>
         </div>
       </div>
@@ -189,7 +195,7 @@ export default async function DashboardPage() {
       {/* Topics Grid */}
       <div className="mt-8 md:mt-10">
         <h2 className="mb-4 text-lg font-bold text-foreground md:mb-5 md:text-[22px]">
-          Topics
+          {t('dashboard.topics')}
         </h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4">
           {topics?.map((topic) => (
@@ -210,7 +216,7 @@ export default async function DashboardPage() {
       {recentConversations && recentConversations.length > 0 && (
         <div className="mt-8 md:mt-10">
           <h2 className="mb-4 text-lg font-bold text-foreground md:mb-5 md:text-[22px]">
-            Recent Conversations
+            {t('dashboard.recentConversations')}
           </h2>
           <div className="flex flex-col gap-3 md:gap-4">
             {recentConversations.map((conv) => {
@@ -230,7 +236,7 @@ export default async function DashboardPage() {
                       {conv.title}
                     </p>
                     <p className="mt-0.5 text-xs text-foreground-secondary md:text-sm">
-                      {timeAgo} · {conv.message_count} messages
+                      {timeAgo} · {conv.message_count} {t('dashboard.messages')}
                     </p>
                   </div>
                   <div className="shrink-0 text-sm font-bold text-xp md:text-base">

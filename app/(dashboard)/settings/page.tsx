@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { useTranslation } from '@/lib/i18n/context';
+import type { SupportedLanguage } from '@/types';
 
 interface Profile {
   display_name: string;
@@ -11,10 +13,12 @@ interface Profile {
   level: number;
   total_xp: number;
   daily_goal: number;
+  preferred_language: string;
 }
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [autoTts, setAutoTts] = useState(true);
   const [showTranslations, setShowTranslations] = useState(true);
@@ -25,7 +29,7 @@ export default function SettingsPage() {
       const supabase = createClient();
       const { data } = await supabase
         .from('profiles')
-        .select('display_name, jlpt_level, level, total_xp, daily_goal')
+        .select('display_name, jlpt_level, level, total_xp, daily_goal, preferred_language')
         .single();
       if (data) setProfile(data);
     }
@@ -43,9 +47,19 @@ export default function SettingsPage() {
     router.push('/login');
   }
 
+  async function handleLanguageChange(lang: SupportedLanguage) {
+    const supabase = createClient();
+    await supabase
+      .from('profiles')
+      .update({ preferred_language: lang })
+      .eq('id', (await supabase.auth.getUser()).data.user!.id);
+    // Reload page to update LanguageProvider from server layout
+    window.location.reload();
+  }
+
   return (
     <div className="p-5 md:mx-auto md:max-w-2xl md:p-10">
-      <h1 className="text-[28px] font-bold text-foreground md:text-[42px]">Settings</h1>
+      <h1 className="text-[28px] font-bold text-foreground md:text-[42px]">{t('settings.title')}</h1>
 
       <div className="mt-5 flex flex-col gap-5 md:mt-8">
         {/* Profile Card */}
@@ -66,18 +80,24 @@ export default function SettingsPage() {
         </Link>
 
         {/* Learning */}
-        <SettingsGroup title="Learning">
-          <SettingsLink icon="📖" label="JLPT Level" value={profile?.jlpt_level ?? '...'} href="/profile/edit" />
-          <SettingsLink icon="🎯" label="Daily Goal" value={`${profile?.daily_goal ?? 15} min`} href="/profile/edit" />
-          <SettingsToggle icon="🔊" label="Auto-play TTS" value={autoTts} onChange={setAutoTts} />
-          <SettingsToggle icon="🇻🇳" label="Show Translations" value={showTranslations} onChange={setShowTranslations} />
+        <SettingsGroup title={t('settings.learning')}>
+          <SettingsLink icon="📖" label={t('settings.jlptLevel')} value={profile?.jlpt_level ?? '...'} href="/profile/edit" />
+          <SettingsLink icon="🎯" label={t('settings.dailyGoal')} value={`${profile?.daily_goal ?? 15} min`} href="/profile/edit" />
+          <SettingsToggle icon="🔊" label={t('settings.autoPlayTts')} value={autoTts} onChange={setAutoTts} />
+          <SettingsToggle icon="🇻🇳" label={t('settings.showTranslations')} value={showTranslations} onChange={setShowTranslations} />
+          <SettingsLanguage
+            icon="🌐"
+            label={t('settings.language')}
+            value={(profile?.preferred_language ?? 'vi') as SupportedLanguage}
+            onChange={handleLanguageChange}
+          />
         </SettingsGroup>
 
         {/* App */}
-        <SettingsGroup title="App">
-          <SettingsLink icon="🔒" label="Change Password" href="/settings/change-password" />
-          <SettingsLink icon="📊" label="Progress Analytics" href="/progress" />
-          <SettingsLink icon="🏆" label="Achievements" href="/achievements" />
+        <SettingsGroup title={t('settings.app')}>
+          <SettingsLink icon="🔒" label={t('settings.changePassword')} href="/settings/change-password" />
+          <SettingsLink icon="📊" label={t('settings.progressAnalytics')} href="/progress" />
+          <SettingsLink icon="🏆" label={t('settings.achievements')} href="/achievements" />
           <button
             onClick={handleLogout}
             disabled={loggingOut}
@@ -85,7 +105,7 @@ export default function SettingsPage() {
           >
             <span className="w-8 text-center text-xl">🚪</span>
             <span className="flex-1 text-base text-destructive">
-              {loggingOut ? 'Logging out...' : 'Log Out'}
+              {loggingOut ? t('settings.loggingOut') : t('settings.logOut')}
             </span>
             <span className="text-sm text-foreground-secondary">›</span>
           </button>
@@ -157,6 +177,41 @@ function SettingsToggle({
           className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${value ? 'translate-x-5' : ''}`}
         />
       </button>
+    </div>
+  );
+}
+
+const LANGUAGES: { value: SupportedLanguage; label: string; flag: string }[] = [
+  { value: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
+  { value: 'en', label: 'English', flag: '🇬🇧' },
+];
+
+function SettingsLanguage({
+  icon,
+  label,
+  value,
+  onChange,
+}: {
+  icon: string;
+  label: string;
+  value: SupportedLanguage;
+  onChange: (lang: SupportedLanguage) => void;
+}) {
+  return (
+    <div className="flex items-center gap-3 border border-glass-border bg-glass px-4 py-4">
+      <span className="w-8 text-center text-xl">{icon}</span>
+      <span className="flex-1 text-base text-foreground">{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as SupportedLanguage)}
+        className="rounded-lg border border-glass-border bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-sm text-foreground outline-none"
+      >
+        {LANGUAGES.map((l) => (
+          <option key={l.value} value={l.value}>
+            {l.flag} {l.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

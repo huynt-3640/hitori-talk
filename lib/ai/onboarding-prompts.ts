@@ -1,6 +1,11 @@
-import type { JLPTLevel } from '@/types';
+import type { JLPTLevel, SupportedLanguage } from '@/types';
 
-export function buildOnboardingSystemPrompt(jlptLevel: JLPTLevel): string {
+function langLabel(lang: SupportedLanguage): string {
+  return lang === 'vi' ? 'Vietnamese (tiếng Việt)' : 'English';
+}
+
+export function buildOnboardingSystemPrompt(jlptLevel: JLPTLevel, lang: SupportedLanguage = 'vi'): string {
+  const label = langLabel(lang);
   return [
     'You are a friendly Japanese conversation partner conducting a casual placement test.',
     `The learner self-assessed as JLPT ${jlptLevel} level and works as an IT developer.`,
@@ -15,18 +20,19 @@ export function buildOnboardingSystemPrompt(jlptLevel: JLPTLevel): string {
     'You MUST respond with ONLY a valid JSON object. No text before or after the JSON. No markdown code blocks. No explanation outside the JSON:',
     '{',
     '  "response": "Your conversational reply in Japanese",',
-    '  "corrections": [{"original": "...", "corrected": "...", "explanation": "Giải thích bằng tiếng Việt", "type": "grammar|vocabulary|politeness"}] or null if no mistakes,',
-    '  "translation": "Bản dịch tiếng Việt của câu trả lời"',
+    `  "corrections": [{"original": "...", "corrected": "...", "explanation": "Explanation in ${label}", "type": "grammar|vocabulary|politeness"}] or null if no mistakes,`,
+    `  "translation": "Translation of your reply in ${label}"`,
     '}',
     '',
     'LANGUAGE RULES:',
-    '- "response": Japanese only',
-    '- "explanation": Vietnamese only',
-    '- "translation": Vietnamese only',
+    '- "response": Japanese only (kanji, hiragana, katakana). NEVER use romaji.',
+    `- "explanation": ${label} only`,
+    `- "translation": ${label} only`,
   ].join('\n');
 }
 
-export function buildOnboardingGreetingPrompt(jlptLevel: JLPTLevel): string {
+export function buildOnboardingGreetingPrompt(jlptLevel: JLPTLevel, lang: SupportedLanguage = 'vi'): string {
+  const label = langLabel(lang);
   return [
     `You are starting a casual placement conversation with a JLPT ${jlptLevel} level IT developer.`,
     'Generate a friendly opening greeting in Japanese that invites them to talk about their work.',
@@ -34,7 +40,7 @@ export function buildOnboardingGreetingPrompt(jlptLevel: JLPTLevel): string {
     'Respond with ONLY a valid JSON object (no text before or after, no markdown):',
     '{',
     '  "response": "Your greeting in Japanese - ask about their work or introduce yourself",',
-    '  "translation": "Vietnamese translation of the greeting"',
+    `  "translation": "Translation of the greeting in ${label}"`,
     '}',
   ].join('\n');
 }
@@ -46,8 +52,10 @@ interface EvaluationMessage {
 
 export function buildEvaluationPrompt(
   selfAssessedLevel: JLPTLevel,
-  messages: EvaluationMessage[]
+  messages: EvaluationMessage[],
+  lang: SupportedLanguage = 'vi'
 ): string {
+  const label = langLabel(lang);
   const conversation = messages
     .map((m) => `${m.role === 'user' ? 'Learner' : 'AI'}: ${m.content}`)
     .join('\n');
@@ -68,7 +76,7 @@ export function buildEvaluationPrompt(
     'Respond with ONLY a valid JSON object (no text before or after, no markdown):',
     '{',
     '  "evaluated_level": "N5|N4|N3|N2|N1",',
-    '  "reasoning": "Brief explanation in Vietnamese about their level"',
+    `  "reasoning": "Brief explanation in ${label} about their level"`,
     '}',
   ].join('\n');
 }

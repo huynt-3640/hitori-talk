@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useTranslation } from '@/lib/i18n/context';
 
 interface Topic {
   id: string;
@@ -25,6 +26,7 @@ interface ConversationSummary {
 export default function TopicDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const { t } = useTranslation();
   const topicId = params.id as string;
 
   const [topic, setTopic] = useState<Topic | null>(null);
@@ -88,18 +90,18 @@ export default function TopicDetailPage() {
           ←
         </button>
         <span className="hidden text-base text-foreground-secondary md:block">
-          <button onClick={() => router.push('/topics')} className="text-primary-light hover:underline">Topics</button>
+          <button onClick={() => router.push('/topics')} className="text-primary-light hover:underline">{t('topics.title')}</button>
           {' / '}
           {topic.title}
         </span>
-        <h1 className="text-lg font-semibold text-foreground md:hidden">Topic</h1>
+        <h1 className="text-lg font-semibold text-foreground md:hidden">{t('topicDetail.topic')}</h1>
       </div>
 
-      {/* Two Column Layout (desktop) / Single column (mobile) */}
+      {/* Two Column Layout */}
       <div className="mt-6 flex flex-col gap-8 md:mt-8 md:grid md:grid-cols-[1fr_400px] md:gap-10">
         {/* Left Column */}
         <div className="flex flex-col gap-6 md:gap-8">
-          {/* Hero - Mobile: centered, Desktop: horizontal */}
+          {/* Hero */}
           <div className="flex flex-col items-center gap-4 text-center md:flex-row md:items-start md:gap-8 md:text-left">
             <div className="glass-card shrink-0 rounded-2xl p-6 text-[64px] md:p-8">{topic.icon}</div>
             <div className="flex flex-col gap-3 md:gap-4">
@@ -114,26 +116,26 @@ export default function TopicDetailPage() {
                 onClick={handleStart}
                 className="btn-primary-gradient mx-auto mt-2 w-fit rounded-xl px-6 py-3 text-base font-semibold md:mx-0 md:px-10 md:py-4 md:text-lg"
               >
-                ▶ Start Conversation
+                ▶ {t('topicDetail.startConversation')}
               </button>
             </div>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-            <StatCard label="Practiced" value={`${stats.count}x`} />
-            <StatCard label="Avg Messages" value={stats.avgMessages} />
-            <StatCard label="Total XP" value={`+${stats.totalXp}`} colorClass="text-xp" />
-            <StatCard label="Accuracy" value={stats.accuracy} colorClass="text-success" />
+            <StatCard label={t('topicDetail.practiced')} value={`${stats.count}x`} />
+            <StatCard label={t('topicDetail.avgMessages')} value={stats.avgMessages} />
+            <StatCard label={t('topicDetail.totalXp')} value={`+${stats.totalXp}`} colorClass="text-xp" />
+            <StatCard label={t('topicDetail.accuracy')} value={stats.accuracy} colorClass="text-success" />
           </div>
 
           {/* Example Phrases */}
           {topic.example_phrases && topic.example_phrases.length > 0 && (
             <div>
-              <h3 className="mb-4 text-xl font-bold text-foreground">Example Phrases</h3>
+              <h3 className="mb-4 text-xl font-bold text-foreground">{t('topicDetail.examplePhrases')}</h3>
               <div className="flex flex-col gap-3">
                 {topic.example_phrases.map((phrase, i) => (
-                  <PhraseCard key={i} jp={phrase.ja} vi={phrase.vi} />
+                  <PhraseCard key={i} jp={phrase.ja} translation={phrase.vi} />
                 ))}
               </div>
             </div>
@@ -145,7 +147,7 @@ export default function TopicDetailPage() {
           {/* Recent Sessions */}
           {conversations.length > 0 && (
             <div>
-              <h3 className="mb-3 text-lg font-bold text-foreground md:mb-4 md:text-xl">Recent Sessions</h3>
+              <h3 className="mb-3 text-lg font-bold text-foreground md:mb-4 md:text-xl">{t('topicDetail.recentSessions')}</h3>
               <div className="flex flex-col gap-3">
                 {conversations.map((conv) => (
                   <button
@@ -160,7 +162,7 @@ export default function TopicDetailPage() {
                         {new Date(conv.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                       </p>
                       <p className="mt-0.5 text-xs text-foreground-secondary md:text-sm">
-                        {conv.message_count} messages
+                        {conv.message_count} {t('topicDetail.messages')}
                       </p>
                     </div>
                     <span className="text-sm font-bold text-xp md:text-base">+{conv.xp_earned} XP</span>
@@ -173,7 +175,7 @@ export default function TopicDetailPage() {
           {/* Tips Card */}
           {topic.tips && topic.tips.length > 0 && (
             <div className="glass-card rounded-2xl p-5 md:p-6">
-              <h3 className="mb-4 text-base font-bold text-foreground md:text-lg">💡 Tips</h3>
+              <h3 className="mb-4 text-base font-bold text-foreground md:text-lg">💡 {t('topicDetail.tips')}</h3>
               <div className="flex flex-col">
                 {topic.tips.map((tip, i) => {
                   const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'];
@@ -183,13 +185,13 @@ export default function TopicDetailPage() {
             </div>
           )}
 
-          {/* Mobile Start Button (bottom) */}
+          {/* Mobile Start Button */}
           <div className="md:hidden">
             <button
               onClick={handleStart}
               className="btn-primary-gradient w-full rounded-xl px-6 py-4 text-lg font-semibold"
             >
-              ▶ Start Conversation
+              ▶ {t('topicDetail.startConversation')}
             </button>
           </div>
         </div>
@@ -207,11 +209,11 @@ function StatCard({ label, value, colorClass }: { label: string; value: string; 
   );
 }
 
-function PhraseCard({ jp, vi }: { jp: string; vi: string }) {
+function PhraseCard({ jp, translation }: { jp: string; translation: string }) {
   return (
     <div className="glass-card flex flex-col gap-2 rounded-xl p-5">
       <p className="text-lg font-semibold text-foreground">{jp}</p>
-      <p className="text-base text-foreground-secondary">{vi}</p>
+      <p className="text-base text-foreground-secondary">{translation}</p>
     </div>
   );
 }

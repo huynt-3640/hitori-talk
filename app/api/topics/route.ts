@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { chatCompletion } from '@/lib/ai/chat';
 import { buildTopicPhrasesPrompt } from '@/lib/ai/prompts';
 import { parseJsonResponse } from '@/lib/ai/parse-json-response';
+import type { SupportedLanguage } from '@/types';
 
 export async function GET() {
   const supabase = await createClient();
@@ -56,8 +57,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Fetch user's preferred language for phrase generation
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('preferred_language')
+    .eq('id', user.id)
+    .single();
+  const lang = (profile?.preferred_language ?? 'vi') as SupportedLanguage;
+
   // Generate phrases/tips via AI (non-blocking — don't fail topic creation if this fails)
-  generatePhrasesForTopic(supabase, data.id, title, description, cat);
+  generatePhrasesForTopic(supabase, data.id, title, description, cat, lang);
 
   return NextResponse.json(data, { status: 201 });
 }
@@ -67,10 +76,11 @@ async function generatePhrasesForTopic(
   topicId: string,
   title: string,
   description: string,
-  category: string
+  category: string,
+  lang: SupportedLanguage
 ) {
   try {
-    const prompt = buildTopicPhrasesPrompt(title, description, category);
+    const prompt = buildTopicPhrasesPrompt(title, description, category, lang);
     const response = await chatCompletion([{ role: 'user', content: prompt }]);
     const parsed = parseJsonResponse(response.content);
 
