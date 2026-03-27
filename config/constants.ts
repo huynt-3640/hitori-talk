@@ -30,7 +30,7 @@ export const MODEL_CONFIG = {
 export const GEMINI_CONFIG = {
   BASE_URL: 'https://aiplatform.googleapis.com/v1/publishers/google/models',
   DEFAULT_MODEL: 'gemini-3-flash-preview',
-  MAX_TOKENS: 1024,
+  MAX_TOKENS: 2048,
   TEMPERATURE: 0.7,
 } as const;
 

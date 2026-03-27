@@ -146,6 +146,27 @@ export async function POST(
       .select('id, role, content, corrections, translation, created_at')
       .single();
 
+    // Save corrections to mistake_log
+    if (corrections && Array.isArray(corrections) && corrections.length > 0 && aiMessage) {
+      const mistakeRows = corrections
+        .filter((c): c is { original: string; corrected: string; explanation?: string; type?: string } =>
+          typeof c === 'object' && c !== null && 'original' in c && 'corrected' in c
+        )
+        .map((c) => ({
+          user_id: user.id,
+          conversation_id: params.id,
+          message_id: aiMessage.id,
+          original_text: c.original,
+          corrected_text: c.corrected,
+          explanation: c.explanation || null,
+          mistake_type: c.type || 'grammar',
+        }));
+
+      if (mistakeRows.length > 0) {
+        await supabase.from('mistake_log').insert(mistakeRows);
+      }
+    }
+
     // Update conversation message count
     await supabase
       .from('conversations')

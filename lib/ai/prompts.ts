@@ -48,6 +48,8 @@ export function buildSystemPrompt(context: PromptContext): string {
     '- "translation": MUST be in Vietnamese (tiếng Việt). Vietnamese examples: "Xin chào", "Hôm nay bạn làm gì?"',
     '- NEVER write explanation or translation in Japanese or English. ALWAYS use Vietnamese.',
     '- The "translation" field is MANDATORY. Never return null or omit this field.',
+    '- Keep your response SHORT (1-3 sentences max). This is critical to avoid truncation.',
+    '- Keep corrections concise. Only include the specific mistake, not the full sentence.',
   ].join('\n');
 }
 

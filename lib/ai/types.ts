@@ -5,6 +5,7 @@ export interface ChatMessage {
 
 export interface ChatResponse {
   content: string;
+  truncated?: boolean;
   usage: {
     prompt_tokens: number;
     completion_tokens: number;

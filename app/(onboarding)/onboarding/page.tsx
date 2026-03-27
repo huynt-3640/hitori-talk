@@ -289,34 +289,7 @@ export default function OnboardingPage() {
           <div className="flex-1 overflow-y-auto p-5">
             <div className="flex flex-col gap-4">
               {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
-                    msg.role === 'user'
-                      ? 'bg-primary text-white'
-                      : 'border border-glass-border bg-glass'
-                  }`}>
-                    <p className={`text-[15px] ${msg.role === 'user' ? 'text-white' : 'text-foreground'}`}>
-                      {msg.content}
-                    </p>
-                    {msg.translation && (
-                      <p className={`mt-1.5 text-xs ${msg.role === 'user' ? 'text-white/60' : 'text-foreground-secondary'}`}>
-                        {msg.translation}
-                      </p>
-                    )}
-                    {msg.corrections && msg.corrections.length > 0 && (
-                      <div className="mt-2 border-t border-glass-border pt-2">
-                        {msg.corrections.map((c, ci) => (
-                          <div key={ci} className="text-xs text-foreground-secondary">
-                            <span className="text-destructive line-through">{c.original}</span>
-                            {' → '}
-                            <span className="text-success">{c.corrected}</span>
-                            <p className="mt-0.5 text-foreground-secondary/80">{c.explanation}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <OnboardingBubble key={i} msg={msg} onSpeak={speak} />
               ))}
               {sending && (
                 <div className="flex justify-start">
@@ -443,6 +416,54 @@ export default function OnboardingPage() {
               </button>
             )}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OnboardingBubble({ msg, onSpeak }: { msg: ChatMessage; onSpeak: (text: string) => void }) {
+  const [showTranslation, setShowTranslation] = useState(false);
+  const isUser = msg.role === 'user';
+
+  return (
+    <div className={`flex flex-col gap-1.5 ${isUser ? 'items-end' : 'items-start'}`}>
+      {/* Bubble */}
+      <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+        isUser
+          ? 'bg-primary text-white'
+          : 'border border-glass-border bg-glass'
+      }`}>
+        <p className={`text-[15px] ${isUser ? 'text-white' : 'text-foreground'}`}>
+          {msg.content}
+        </p>
+      </div>
+
+      {/* Translation toggle + Speaker (AI only) */}
+      {!isUser && (
+        <div className="flex items-center gap-2 px-1">
+          {msg.translation && (
+            <button
+              onClick={() => setShowTranslation(!showTranslation)}
+              className="text-xs text-primary-light hover:underline"
+            >
+              {showTranslation ? 'Hide translation' : 'Show translation'}
+            </button>
+          )}
+          <button
+            onClick={() => onSpeak(msg.content)}
+            className="text-xs text-foreground-secondary transition-colors hover:text-primary-light"
+            title="Listen"
+          >
+            🔊
+          </button>
+        </div>
+      )}
+
+      {/* Translation content */}
+      {!isUser && showTranslation && msg.translation && (
+        <div className="max-w-[85%] rounded-lg border-l-2 border-primary-soft bg-[rgba(255,255,255,0.04)] px-3 py-2 text-sm text-foreground-secondary">
+          {msg.translation}
         </div>
       )}
     </div>

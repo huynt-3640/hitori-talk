@@ -21,7 +21,10 @@ function formatDate(): string {
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const [profileResult, topicsResult, recentResult] = await Promise.all([
+  const today = new Date().toISOString().split('T')[0];
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  const [profileResult, topicsResult, recentResult, todayStatsResult, weekStatsResult] = await Promise.all([
     supabase
       .from('profiles')
       .select('display_name, total_xp, current_streak, level, jlpt_level, daily_goal')
@@ -36,11 +39,35 @@ export default async function DashboardPage() {
       .select('id, title, created_at, message_count, xp_earned, topic_id, topics(icon)')
       .order('created_at', { ascending: false })
       .limit(3),
+    supabase
+      .from('daily_stats')
+      .select('practice_minutes')
+      .eq('date', today)
+      .single(),
+    supabase
+      .from('daily_stats')
+      .select('conversations_count, practice_minutes, xp_earned, messages_count, mistakes_count')
+      .gte('date', weekAgo),
   ]);
 
   const profile = profileResult.data;
   const topics = topicsResult.data;
   const recentConversations = recentResult.data;
+  const todayStats = todayStatsResult.data;
+  const weekStats = weekStatsResult.data;
+
+  // Today's goal progress
+  const todayMinutes = todayStats?.practice_minutes ?? 0;
+  const dailyGoal = profile?.daily_goal ?? 15;
+  const goalPercent = Math.min(100, Math.round((todayMinutes / dailyGoal) * 100));
+
+  // This week aggregation
+  const weekConversations = weekStats?.reduce((s, d) => s + d.conversations_count, 0) ?? 0;
+  const weekMinutes = weekStats?.reduce((s, d) => s + d.practice_minutes, 0) ?? 0;
+  const weekXP = weekStats?.reduce((s, d) => s + d.xp_earned, 0) ?? 0;
+  const weekMessages = weekStats?.reduce((s, d) => s + d.messages_count, 0) ?? 0;
+  const weekMistakes = weekStats?.reduce((s, d) => s + d.mistakes_count, 0) ?? 0;
+  const weekAccuracy = weekMessages > 0 ? Math.round((1 - weekMistakes / weekMessages) * 100) : null;
 
   const initials = profile?.display_name
     ? profile.display_name.slice(0, 2).toUpperCase()
@@ -137,13 +164,13 @@ export default async function DashboardPage() {
         <div className="glass-card col-span-2 rounded-xl p-4 transition-all hover:border-glass-border-strong hover:bg-glass-hover md:rounded-2xl md:p-6">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-foreground md:text-lg">🎯 Today&apos;s Goal</span>
-            <span className="text-sm font-bold text-primary-light md:text-base">0%</span>
+            <span className="text-sm font-bold text-primary-light md:text-base">{goalPercent}%</span>
           </div>
           <div className="progress-bar mt-3">
-            <div className="progress-fill" style={{ width: '0%' }} />
+            <div className="progress-fill" style={{ width: `${goalPercent}%` }} />
           </div>
           <p className="mt-2 text-xs text-foreground-secondary md:mt-3 md:text-sm">
-            0 / {profile?.daily_goal ?? 15} minutes completed
+            {todayMinutes} / {dailyGoal} minutes completed
           </p>
         </div>
 
@@ -151,10 +178,10 @@ export default async function DashboardPage() {
         <div className="glass-card col-span-2 hidden rounded-2xl p-6 transition-all hover:border-glass-border-strong hover:bg-glass-hover md:block">
           <p className="mb-4 text-lg font-semibold text-foreground">📊 This Week</p>
           <div className="flex flex-col gap-4">
-            <WeekRow label="Conversations" value="0" />
-            <WeekRow label="Practice Time" value="0 min" />
-            <WeekRow label="XP Earned" value="+0" valueClass="text-xp" />
-            <WeekRow label="Accuracy" value="—" valueClass="text-success" />
+            <WeekRow label="Conversations" value={String(weekConversations)} />
+            <WeekRow label="Practice Time" value={`${weekMinutes} min`} />
+            <WeekRow label="XP Earned" value={`+${weekXP}`} valueClass="text-xp" />
+            <WeekRow label="Accuracy" value={weekAccuracy !== null ? `${weekAccuracy}%` : '—'} valueClass="text-success" />
           </div>
         </div>
       </div>

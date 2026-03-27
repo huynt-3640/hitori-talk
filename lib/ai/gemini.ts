@@ -11,6 +11,7 @@ interface GeminiResponse {
     content: {
       parts: { text: string }[];
     };
+    finishReason?: string;
   }[];
   usageMetadata?: {
     promptTokenCount: number;
@@ -70,10 +71,18 @@ export async function geminiChatCompletion(
   }
 
   const data = (await response.json()) as GeminiResponse;
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const candidate = data.candidates?.[0];
+  const text = candidate?.content?.parts?.[0]?.text ?? '';
+  const finishReason = candidate?.finishReason;
+
+  // Log warning if response was truncated due to token limit
+  if (finishReason === 'MAX_TOKENS') {
+    console.warn('[Gemini] Response truncated due to MAX_TOKENS limit');
+  }
 
   return {
     content: text,
+    truncated: finishReason === 'MAX_TOKENS',
     usage: {
       prompt_tokens: data.usageMetadata?.promptTokenCount ?? 0,
       completion_tokens: data.usageMetadata?.candidatesTokenCount ?? 0,

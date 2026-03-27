@@ -44,10 +44,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-5 md:p-10 md:pl-12">
+    <div className="p-5 md:mx-auto md:max-w-2xl md:p-10">
       <h1 className="text-[28px] font-bold text-foreground md:text-[42px]">Settings</h1>
 
-      <div className="mt-5 flex flex-col gap-5 md:mt-8 md:max-w-2xl">
+      <div className="mt-5 flex flex-col gap-5 md:mt-8">
         {/* Profile Card */}
         <Link
           href="/profile"
@@ -78,16 +78,10 @@ export default function SettingsPage() {
           <SettingsLink icon="🔒" label="Change Password" href="/settings/change-password" />
           <SettingsLink icon="📊" label="Progress Analytics" href="/progress" />
           <SettingsLink icon="🏆" label="Achievements" href="/achievements" />
-        </SettingsGroup>
-
-        {/* Account */}
-        <SettingsGroup title="Account">
-          <SettingsLink icon="📝" label="Conversation History" href="/history" />
-          <SettingsLink icon="❌" label="Mistake Log" href="/mistakes" />
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="flex w-full items-center gap-3 rounded-b-lg border border-t-0 border-glass-border bg-glass px-4 py-4 text-left transition-all hover:bg-glass-hover"
+            className="flex w-full items-center gap-3 border border-t-0 border-glass-border bg-glass px-4 py-4 text-left transition-all hover:bg-glass-hover"
           >
             <span className="w-8 text-center text-xl">🚪</span>
             <span className="flex-1 text-base text-destructive">

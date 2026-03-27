@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { MessageBubble } from '@/components/conversation/message-bubble';
 import { MessageInput } from '@/components/conversation/message-input';
+import { CompletionCard } from '@/components/conversation/completion-card';
 import { useAudioRecorder } from '@/lib/hooks/use-audio-recorder';
 import { useSpeechSynthesis } from '@/lib/hooks/use-speech-synthesis';
 
@@ -34,8 +35,18 @@ export default function ConversationPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [ending, setEnding] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [autoSpeak, setAutoSpeak] = useState(true);
+  const [completionData, setCompletionData] = useState<{
+    xp_earned: number;
+    total_xp: number;
+    level: number;
+    level_up: boolean;
+    previous_level: number;
+    streak: number;
+    new_achievements: { id: string; name: string; name_ja: string; icon: string; xp_reward: number }[];
+  } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const startTimeRef = useRef(Date.now());
   const initialLoadRef = useRef(true);
@@ -113,6 +124,26 @@ export default function ConversationPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  async function handleEnd() {
+    setEnding(true);
+    stopSpeaking();
+    try {
+      const res = await fetch(`/api/conversations/${conversationId}/end`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ elapsed_seconds: elapsed }),
+      });
+      if (!res.ok) throw new Error('Failed to end conversation');
+      const data = await res.json();
+      setCompletionData(data);
+    } catch {
+      // Fallback: just go to dashboard
+      router.push('/dashboard');
+    } finally {
+      setEnding(false);
+    }
+  }
 
   async function handleSend(content: string) {
     const tempUserMsg: Message = {
@@ -201,10 +232,11 @@ export default function ConversationPage() {
           {formatTime(elapsed)}
         </span>
         <button
-          onClick={() => router.push('/dashboard')}
-          className="shrink-0 rounded-lg border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.1)] px-3 py-1.5 text-xs font-semibold text-destructive md:rounded-xl md:px-5 md:py-2 md:text-sm"
+          onClick={handleEnd}
+          disabled={ending}
+          className="shrink-0 rounded-lg border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.1)] px-3 py-1.5 text-xs font-semibold text-destructive md:rounded-xl md:px-5 md:py-2 md:text-sm disabled:opacity-50"
         >
-          End
+          {ending ? '...' : 'End'}
         </button>
       </header>
 
@@ -298,6 +330,19 @@ export default function ConversationPage() {
           </div>
         </aside>
       </div>
+
+      {/* Completion Overlay */}
+      {completionData && (
+        <CompletionCard
+          xpEarned={completionData.xp_earned}
+          totalXP={completionData.total_xp}
+          level={completionData.level}
+          levelUp={completionData.level_up}
+          previousLevel={completionData.previous_level}
+          streak={completionData.streak}
+          newAchievements={completionData.new_achievements}
+        />
+      )}
     </div>
   );
 }
