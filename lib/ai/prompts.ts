@@ -43,7 +43,8 @@ export function buildSystemPrompt(context: PromptContext): string {
     '}',
     '',
     'CRITICAL LANGUAGE RULES (VIOLATION = FAILURE):',
-    '- "response": MUST be in Japanese only',
+    '- "response": MUST be written in proper Japanese using kanji, hiragana, and katakana. NEVER use romaji (Latin alphabet). Wrong: "Ohayou gozaimasu". Correct: "おはようございます".',
+    '- NEVER write Japanese in romaji/Latin letters. Always use Japanese script (漢字、ひらがな、カタカナ).',
     '- "explanation": MUST be in Vietnamese (tiếng Việt). Vietnamese examples: "Phải dùng thể quá khứ", "Sai trợ từ, dùng を thay vì が"',
     '- "translation": MUST be in Vietnamese (tiếng Việt). Vietnamese examples: "Xin chào", "Hôm nay bạn làm gì?"',
     '- NEVER write explanation or translation in Japanese or English. ALWAYS use Vietnamese.',
@@ -106,7 +107,8 @@ export function buildContextGenerationPrompt(
     '',
     'IMPORTANT:',
     '- The "ai_role" and "scenario" fields MUST be written in Vietnamese.',
-    '- The "greeting" must be in Japanese. The "greeting_translation" must be the Vietnamese translation.',
-    '- "useful_expressions": Generate 4-5 expressions specific to THIS scenario that the learner might need. These should be practical phrases an IT developer would use in this exact situation.',
+    '- The "greeting" must be in proper Japanese script (kanji/hiragana/katakana). NEVER use romaji.',
+    '- The "greeting_translation" must be the Vietnamese translation.',
+    '- "useful_expressions": Generate 4-5 expressions specific to THIS scenario. Write Japanese in proper script (漢字、ひらがな、カタカナ), NEVER romaji. Vietnamese translation for each.',
   ].join('\n');
 }
